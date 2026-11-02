@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</title>
+<style>
+:root{
+  --bg-slide:#FFFFFF; --bg-title:#003D32; --bg-title-end:#01A982;
+  --accent-teal:#01A982; --accent-teal-light:#7DFFCB;
+  --text-primary:#1A1A1A; --text-secondary:#555555; --text-muted:#999999;
+  --text-footer:#BBBBBB; --border-light:#EEEEEE; --bg-donut-track:#E8F5F1;
+  --ink:#0f172a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Inter','Leelawadee UI','Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text-primary);background:#f4f6f8}
+img{max-width:100%}
+a{color:var(--accent-teal)}
+
+/* ================= TOP NAV ================= */
+.topnav{position:sticky;top:0;z-index:500;background:#fff;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:18px;padding:12px 28px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;color:var(--ink)}
+.brand .sq{width:22px;height:22px;background:linear-gradient(135deg,var(--bg-title),var(--accent-teal));border-radius:4px;display:inline-block}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;margin-left:14px}
+.nav-link{border:0;background:none;font-size:14.5px;color:#445;padding:8px 13px;border-radius:8px;cursor:pointer;font-weight:600}
+.nav-link:hover{background:#eefaf6;color:var(--bg-title)}
+.nav-link.active{background:var(--bg-title);color:#fff}
+.nav-actions{margin-left:auto;display:flex;gap:10px}
+.btn{border:0;border-radius:9px;padding:10px 18px;font-size:14.5px;font-weight:700;cursor:pointer}
+.btn-primary{background:var(--bg-title);color:#fff}
+.btn-primary:hover{background:var(--accent-teal)}
+.btn-ghost{background:#fff;color:var(--bg-title);border:1.5px solid var(--accent-teal)}
+.btn-ghost:hover{background:#eefaf6}
+
+/* ================= WEBSITE ================= */
+.hero{background:linear-gradient(120deg,var(--bg-title) 0%,#015c4b 55%,var(--bg-title-end) 100%);color:#fff;padding:88px 40px 76px;text-align:center}
+.hero .kicker{letter-spacing:4px;font-size:13.5px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:700}
+.hero h1{font-size:56px;line-height:1.15;margin:16px auto 14px;max-width:1050px;font-weight:800}
+.hero p{font-size:19.5px;color:#d7fff2;max-width:880px;margin:0 auto 30px;line-height:1.6}
+.hero .meta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);padding:8px 16px;border-radius:999px;font-size:14.5px}
+.sec{max-width:1180px;margin:0 auto;padding:64px 32px}
+.sec h2{font-size:36px;margin:0 0 8px;color:var(--ink);font-weight:800}
+.sec .sub{color:var(--text-secondary);font-size:17px;margin:0 0 30px}
+.card-grid{display:grid;gap:18px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.wcard{background:#fff;border:1px solid var(--border-light);border-radius:14px;padding:22px 22px;box-shadow:0 2px 10px rgba(15,23,42,.05)}
+.wcard h3{margin:0 0 8px;font-size:19px;color:var(--bg-title)}
+.wcard p,.wcard li{font-size:15.5px;color:var(--text-secondary);line-height:1.65}
+.wcard ul{margin:8px 0 0;padding-left:20px}
+.num{display:inline-flex;width:34px;height:34px;border-radius:9px;background:var(--bg-donut-track);color:var(--bg-title);font-weight:800;align-items:center;justify-content:center;margin-bottom:10px}
+.shot{margin:0;border:1px solid var(--border-light);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 3px 14px rgba(15,23,42,.09)}
+.shot img{width:100%;display:block}
+.shot figcaption{font-size:14px;color:#64748b;background:#f8fafc;padding:9px 14px;border-top:1px solid var(--border-light);line-height:1.5}
+.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(15,23,42,.06);font-size:15.5px}
+.tbl th{background:var(--bg-title);color:#fff;text-align:left;padding:13px 15px;font-weight:700;font-size:14.5px}
+.tbl td{padding:11px 15px;border-bottom:1px solid var(--border-light);color:#334155;vertical-align:top}
+.tbl tr:nth-child(even) td{background:#f9fbfb}
+.tbl .ok{color:#017a5b;font-weight:800}
+.tbl .no{color:#c94a4a;font-weight:800}
+.tbl .mut{color:#94a3b8;font-weight:800}
+.code{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;background:#0f172a;color:#7DFFCB;padding:2px 7px;border-radius:6px;font-size:13.5px}
+.note{background:#fffbea;border-left:4px solid #f59e0b;padding:14px 18px;border-radius:0 10px 10px 0;font-size:15.5px;color:#7c5e10;line-height:1.6}
+.sec-foot{border-top:1px solid var(--border-light);margin-top:54px;padding-top:22px;color:var(--text-muted);font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* ================= PRESENTATION ================= */
+#presOverlay{position:fixed;inset:0;background:#0b1220;z-index:1000;display:none}
+#presOverlay.active{display:block}
+#slideContainer{position:absolute;inset:0;overflow:hidden}
+.pres-slide{position:absolute !important;width:1920px;height:1080px;transform-origin:top left;background:var(--bg-slide);display:none !important;flex-direction:column;overflow:hidden;color:var(--text-primary)}
+.pres-slide.active{display:flex !important}
+.s-inner{flex:1;min-height:0;padding:64px 96px 26px;display:flex;flex-direction:column}
+.s-top{height:6px;background:linear-gradient(90deg,var(--bg-title),var(--accent-teal));flex:none}
+.s-head{display:flex;align-items:center;justify-content:space-between;padding:18px 96px 0;flex:none}
+.s-head .lhs{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700;color:#3d5a52;letter-spacing:.5px}
+.s-head .sq{width:20px;height:20px;background:linear-gradient(135deg,var(--bg-title),var(--accent-teal));border-radius:4px}
+.s-head .rhs{font-size:13.5px;color:var(--text-muted)}
+.s-label{font-size:15px;letter-spacing:3.5px;text-transform:uppercase;color:var(--accent-teal);font-weight:800;margin-bottom:10px}
+.s-title{font-size:46px;font-weight:800;color:var(--ink);margin:0 0 6px;line-height:1.18}
+.s-sub{font-size:19px;color:var(--text-secondary);margin:2px 0 22px;line-height:1.5}
+.s-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:18px}
+.s-foot{flex:none;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border-light);margin:0 96px;padding:14px 0 16px;font-size:14px;color:var(--text-footer)}
+.s-foot .pg{font-weight:800;color:#8aa39b}
+
+/* title slide */
+.slide-title{background:linear-gradient(125deg,var(--bg-title) 0%,#015c4b 52%,var(--bg-title-end) 100%);color:#fff}
+.slide-title .s-inner{justify-content:center;padding:90px 120px}
+.slide-title .kicker{letter-spacing:5px;font-size:16px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:800}
+.slide-title h1{font-size:86px;line-height:1.08;margin:22px 0 20px;font-weight:800;max-width:1500px}
+.slide-title .lead{font-size:26px;color:#d9fff3;max-width:1350px;line-height:1.55;margin:0 0 34px}
+.slide-title .tmeta{display:flex;gap:14px;flex-wrap:wrap}
+.slide-title .chip{font-size:16.5px;padding:10px 20px}
+.slide-title .conf{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.22);padding:14px 120px;font-size:14px;color:#bfe9dd;display:flex;justify-content:space-between}
+
+/* section divider */
+.slide-section{background:linear-gradient(120deg,var(--bg-title),var(--accent-teal));color:#fff}
+.slide-section .s-inner{justify-content:center;align-items:flex-start}
+.slide-section .kicker{letter-spacing:5px;font-size:17px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:800}
+.slide-section h2{font-size:74px;margin:18px 0 16px;font-weight:800}
+.slide-section p{font-size:24px;color:#dcfff4;max-width:1300px;line-height:1.5;margin:0}
+
+/* layout helpers inside slides */
+.row{display:flex;gap:26px;min-height:0}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.steps{display:flex;flex-direction:column;gap:13px}
+.step{display:flex;gap:14px;background:#f8fbfa;border:1px solid #e2efec;border-radius:12px;padding:14px 18px;align-items:flex-start}
+.step .n{flex:none;width:34px;height:34px;border-radius:9px;background:var(--bg-title);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16.5px}
+.step .tx{font-size:17.5px;line-height:1.5;color:#25364a}
+.step .tx b{color:var(--bg-title)}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.cards2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.pcard{background:#fff;border:1px solid var(--border-light);border-radius:14px;padding:22px 24px;box-shadow:0 3px 12px rgba(15,23,42,.06);display:flex;flex-direction:column;gap:8px}
+.pcard h3{margin:0;font-size:22px;color:var(--bg-title);font-weight:800}
+.pcard p{margin:0;font-size:16.5px;color:var(--text-secondary);line-height:1.6}
+.pcard .ic{font-size:26px}
+.rulebox{background:linear-gradient(120deg,#003D32,#016b55);color:#eafff8;border-radius:14px;padding:20px 26px;font-size:21px;line-height:1.55;display:flex;gap:16px;align-items:center}
+.rulebox .lk{font-size:30px}
+.tbl-wrap{background:#fff;border:1px solid var(--border-light);border-radius:14px;overflow:hidden;box-shadow:0 3px 12px rgba(15,23,42,.06)}
+.tbl-s{width:100%;border-collapse:collapse;font-size:16.5px}
+.tbl-s th{background:var(--bg-title);color:#fff;text-align:left;padding:13px 18px;font-weight:700;font-size:16px}
+.tbl-s td{padding:11px 18px;border-bottom:1px solid var(--border-light);color:#334155;vertical-align:middle}
+.tbl-s tr:last-child td{border-bottom:0}
+.tbl-s tr:nth-child(even) td{background:#f9fbfb}
+.tbl-s .ok{color:#017a5b;font-weight:800}
+.tbl-s .no{color:#d45b5b;font-weight:800}
+.tbl-s .mut{color:#b0b8c1;font-weight:800}
+.tbl-s .ctr{text-align:center}
+.small-note{font-size:15.5px;color:#7d8b99;line-height:1.55}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:14.5px;font-weight:800;background:var(--bg-donut-track);color:var(--bg-title);margin-right:6px}
+.pill.warn{background:#fff3d6;color:#a16207}
+.pill.red{background:#fde8e8;color:#b91c1c}
+.shot{margin:0;border:1px solid var(--border-light);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 16px rgba(15,23,42,.10);flex:none}
+.shot img{width:100%;display:block}
+.shot figcaption{font-size:15px;color:#64748b;background:#f8fafc;padding:9px 14px;border-top:1px solid var(--border-light);line-height:1.45}
+.shot img.fit-top{max-height:430px;object-fit:cover;object-position:top}
+.shot img.fit-med{max-height:520px;object-fit:cover;object-position:top}
+.gcols{display:grid;grid-template-columns:1fr 1fr;gap:24px;min-height:0}
+.gcols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;min-height:0}
+.kv{display:flex;gap:10px;flex-wrap:wrap}
+.chain{background:#0f172a;border-radius:12px;padding:16px 20px;color:#9ff3dd;font-family:ui-monospace,Consolas,monospace;font-size:16px;line-height:1.75}
+.chain b{color:#ffd479}
+.checklist{display:flex;flex-direction:column;gap:12px}
+.ck{display:flex;gap:14px;align-items:center;background:#f8fbfa;border:1px solid #e2efec;border-radius:12px;padding:13px 18px;font-size:19px;color:#25364a}
+.ck .box{flex:none;width:26px;height:26px;border-radius:7px;border:2.5px solid var(--accent-teal);background:#fff}
+.dodont{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.dd{border-radius:14px;padding:24px 26px;box-shadow:0 3px 12px rgba(15,23,42,.06)}
+.dd.do{background:#effaf5;border:1px solid #b9ecd9}
+.dd.dont{background:#fdf1f1;border:1px solid #f3cccc}
+.dd h3{margin:0 0 12px;font-size:24px}
+.dd.do h3{color:#017a5b}
+.dd.dont h3{color:#b91c1c}
+.dd ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:9px}
+.dd li{font-size:18px;line-height:1.5;color:#334155}
+.pit{display:flex;gap:14px;background:#fff;border:1px solid var(--border-light);border-left:5px solid #f59e0b;border-radius:0 12px 12px 0;padding:15px 20px;box-shadow:0 2px 8px rgba(15,23,42,.05)}
+.pit .ic{font-size:22px;flex:none}
+.pit .tx{font-size:17px;line-height:1.55;color:#334155}
+.pit .tx b{color:var(--bg-title)}
+.thanks{background:linear-gradient(125deg,var(--bg-title),var(--accent-teal));color:#fff}
+.thanks .s-inner{justify-content:center;align-items:center;text-align:center}
+.thanks h2{font-size:84px;margin:0 0 18px;font-weight:800}
+.thanks p{font-size:25px;color:#dcfff4;max-width:1250px;line-height:1.6;margin:0 0 14px}
+
+/* controls */
+.pres-controls{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;background:rgba(9,16,28,.86);border:1px solid rgba(255,255,255,.14);padding:9px 14px;border-radius:14px;z-index:1010}
+.pres-controls button{border:0;background:rgba(255,255,255,.12);color:#fff;font-size:15px;font-weight:700;padding:9px 16px;border-radius:9px;cursor:pointer}
+.pres-controls button:hover{background:var(--accent-teal)}
+.pres-controls .counter{color:#cfe9e1;font-size:15px;font-weight:700;min-width:74px;text-align:center}
+
+/* edit mode */
+#editBar{position:fixed;left:0;right:0;top:0;background:#111c2e;color:#fff;display:none;align-items:center;gap:12px;padding:10px 20px;z-index:1200}
+body.edit-active #editBar{display:flex}
+#editBar .badge{background:#f59e0b;color:#111;font-weight:800;padding:5px 12px;border-radius:7px;font-size:14px}
+#editBar button{border:0;background:#24344f;color:#fff;font-weight:700;font-size:14px;padding:8px 14px;border-radius:8px;cursor:pointer}
+#editBar button:hover{background:var(--accent-teal)}
+.manage-bar{position:absolute;top:10px;right:14px;display:none;gap:6px;z-index:60}
+body.edit-active .manage-bar{display:flex}
+.manage-bar button{border:0;background:rgba(15,23,42,.82);color:#fff;font-size:16px;padding:6px 11px;border-radius:8px;cursor:pointer}
+[contenteditable="true"]{outline:2px dashed #f59e0b;outline-offset:3px;border-radius:4px}
+@media (max-width:900px){
+  .g3,.g4,.g2{grid-template-columns:1fr}
+  .hero h1{font-size:36px}
+  .sec h2{font-size:28px}
+  .topnav{flex-wrap:wrap}
+  .nav-actions{margin-left:0}
+  .tbl-wrap{overflow-x:auto}
+  .tbl,.tbl-s{min-width:640px}
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= TOP NAV ======================= -->
+<nav class="topnav">
+  <div class="brand"><span class="sq"></span> UBO RBAC Training</div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showSection('agenda')">ภาพรวม</button>
+    <button class="nav-link" onclick="showSection('model')">โมเดลสิทธิ์</button>
+    <button class="nav-link" onclick="showSection('visibility')">การมองเห็น</button>
+    <button class="nav-link" onclick="showSection('examples')">6 ตัวอย่าง</button>
+    <button class="nav-link" onclick="showSection('summary')">สรุป &amp; Checklist</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="toggleEditMode()">Edit Mode</button>
+    <button class="btn btn-primary" onclick="enterPresentation()">▶ Presentation Mode</button>
+  </div>
+</nav>
+
+<!-- ======================= WEBSITE ======================= -->
+<header class="hero">
+  <div class="kicker">LH Bank · UBO Verification System</div>
+  <h1>การใช้งานระบบสิทธิ์ (RBAC)<br>สำหรับ Admin และ IT Service Desk</h1>
+  <p>คู่มือภาพจริงจากหน้าระบบ ครอบคลุมการนำผู้ใช้เข้าระบบ การสร้าง Role การกำหนดสิทธิ์ การ Assign ให้ผู้ใช้ทั้งแบบรายบุคคลและแบบกลุ่ม ตลอดจนวิธีตรวจสอบยืนยันผล</p>
+  <div class="meta">
+    <span class="chip">42 Permission Codes</span>
+    <span class="chip">8 Roles · 7 Groups</span>
+    <span class="chip">19 Users</span>
+    <span class="chip">ภาพหน้าจริง 30 ภาพ</span>
+    <span class="chip">ข้อมูล ณ 03/11/2026</span>
+  </div>
+</header>
+
+<section class="sec" id="sec-agenda">
+  <h2>วัตถุประสงค์และการอบรม</h2>
+  <p class="sub">หลังจบการอบรม Admin และ ITSD จะสามารถกำหนดสิทธิ์ให้ผู้ใช้ได้อย่างถูกต้องตามหลัก least privilege</p>
+  <div class="card-grid g4">
+    <div class="wcard"><div class="num">1</div><h3>แนวคิดและโมเดล</h3><p>เข้าใจโมเดล User → Group → Role → Permission และกฎการ resolve สิทธิ์</p></div>
+    <div class="wcard"><div class="num">2</div><h3>การมองเห็นของผู้ใช้</h3><p>รู้ว่าแต่ละ Role เห็นเมนูไหน ใช้หน้าใดได้บ้าง และเห็นหน้า Denied อย่างไร</p></div>
+    <div class="wcard"><div class="num">3</div><h3>6 ตัวอย่างจริง</h3><p>ขั้นตอนนำเข้าผู้ใช้ สร้าง Role กำหนดสิทธิ์ Assign เดี่ยว/กลุ่ม และตรวจสอบผล</p></div>
+    <div class="wcard"><div class="num">4</div><h3>กับดักและเช็คลิสต์</h3><p>ข้อผิดพลาดที่พบบ่อยในระบบจริง + checklist ก่อนส่งมอบสิทธิ์ให้ผู้ใช้</p></div>
+  </div>
+  <div class="note" style="margin-top:26px">💡 ภาพหน้าจอทั้งหมดในเอกสารนี้ capture จากระบบจริง (platform.microware.cloud) เมื่อวันที่ 3 พฤศจิกายน 2026 — ตัวเลขทุกตัวมาจากการ query database จริง</div>
+</section>
+
+<section class="sec" id="sec-model">
+  <h2>โมเดลสิทธิ์ 4 ชั้น</h2>
+  <p class="sub">สิทธิ์เดินทางผ่านกลุ่ม ไม่ผูกตรงกับตัวบุคคล — ตาราง user_roles ว่าง by design</p>
+  <div class="tbl-wrap"><table class="tbl-s">
+    <tr><th style="width:220px">ชั้น</th><th>ตัวอย่างในระบบจริง</th><th style="width:330px">เชื่อมด้วย</th></tr>
+    <tr><td><b>User</b></td><td>P9999 (ROOT), 6658, 2103, IT001 … 19 ราย</td><td><span class="code">user_groups</span></td></tr>
+    <tr><td><b>Group</b></td><td>Administrator, Analysts, Test1, Default … 7 กลุ่ม</td><td><span class="code">group_roles</span></td></tr>
+    <tr><td><b>Role</b></td><td>ROOT, UBO_ADMIN, UBO_ANALYST, Test1 … 8 บทบาท</td><td><span class="code">role_permissions</span></td></tr>
+    <tr><td><b>Permission</b></td><td>42 รหัสสิทธิ์ เช่น <span class="code">ubo:search</span> <span class="code">user:view</span> <span class="code">rbac:manage</span></td><td>—</td></tr>
+  </table></div>
+  <div class="card-grid g3" style="margin-top:24px">
+    <div class="wcard"><h3>กฎ priority</h3><p>อยู่หลายกลุ่มพร้อมกัน → ระบบใช้ Role ที่ priority สูงสุดเป็นสิทธิ์หลัก (max-only)</p></div>
+    <div class="wcard"><h3>Default อัตโนมัติ</h3><p>ผู้ใช้เข้าสู่ระบบครั้งแรกจะได้กลุ่ม Default (Role DEFAULT) แต่ยังถือว่า "รอสิทธิ์" อยู่</p></div>
+    <div class="wcard"><h3>JWT ต่อ session</h3><p>สิทธิ์ถูกฝักอยู่ใน token — หลัง deploy เพิ่มสิทธิ์ใหม่ ผู้ใช้ต้อง login ใหม่</p></div>
+  </div>
+</section>
+
+<section class="sec" id="sec-visibility">
+  <h2>ใครมองเห็นอะไร</h2>
+  <p class="sub">เมนูที่แสดงใน Topbar ถูกกรองจากสิทธิ์ของผู้ใช้ทันทีที่ login — ดูภาพจริงทั้ง 3 สถานะ</p>
+  <div class="card-grid g3">
+    <figure class="shot"><img src="img/15_waiting_screen.jpg" alt="WaitingScreen"><figcaption>ไม่มี Role / มีแค่ DEFAULT → ถูกกันไว้ที่หน้า Waiting เท่านั้น</figcaption></figure>
+    <figure class="shot"><img src="img/18_denied_userlist_toast.jpg" alt="Denied toast"><figcaption>มี Role แต่ไม่มีสิทธิ์ที่จำเป็น → ข้อผิดพลาด <span class="code">Missing required permission: user:view</span></figcaption></figure>
+    <figure class="shot"><img src="img/16_roleuser_home.jpg" alt="Limited role home"><figcaption>มี Role ครบตามหน้าที่ → ใช้งานเมนูได้ตามสิทธิ์ที่ได้รับ</figcaption></figure>
+  </div>
+</section>
+
+<section class="sec" id="sec-examples">
+  <h2>6 ตัวอย่างการทำงานจริง</h2>
+  <p class="sub">ขั้นตอนละเอียดพร้อมภาพหน้าจริง — ตั้งแต่นำผู้ใช้เข้าระบบจนตรวจสอบยืนยันผล</p>
+  <div class="card-grid g3">
+    <div class="wcard"><div class="num">①</div><h3>นำผู้ใช้เข้าระบบ</h3><p>AD/HR → login ครั้งแรก → ปรากฏใน Waiting Queue → รอ Admin กำหนดกลุ่ม</p></div>
+    <div class="wcard"><div class="num">②</div><h3>สร้าง Role</h3><p>ตั้งชื่อ + Priority + เลือก Features เริ่มต้นที่หน้า Roles &amp; Features</p></div>
+    <div class="wcard"><div class="num">③</div><h3>กำหนดสิทธิ์ให้ Role</h3><p>เปิดการ์ด Role → ติ๊ก features 4 หมวด → บันทึกสิทธิ์ หลัก least privilege</p></div>
+    <div class="wcard"><div class="num">④</div><h3>Assign รายบุคคล</h3><p>เลือกผู้ใช้ 1 คนจาก Waiting Queue หรือเพิ่มเป็นสมาชิกกลุ่ม แล้ว verify</p></div>
+    <div class="wcard"><div class="num">⑤</div><h3>Assign แบบกลุ่ม</h3><p>สร้างกลุ่ม + ผูก Role ครั้งเดียว แล้วใส่สมาชิกหลายคน หรือ import CSV</p></div>
+    <div class="wcard"><div class="num">⑥</div><h3>ตรวจสอบยืนยันผล</h3><p>login ทดสอบบัญชีจริง + เช็คหน้า Denied + ตรวจ System Log</p></div>
+  </div>
+</section>
+
+<section class="sec" id="sec-summary">
+  <h2>สรุป &amp; Checklist</h2>
+  <p class="sub">ใช้หน้าสุดท้ายนี้เป็นเอกสารกำกับการทำงานทุกครั้ง</p>
+  <div class="card-grid g2">
+    <div class="wcard">
+      <h3>✅ Do</h3>
+      <ul>
+        <li>ผูกสิทธิ์ผ่าน "กลุ่ม" เสมอ ไม่ผูกตรงกับตัวบุคคล</li>
+        <li>ให้ Role ต่ำสุดที่พอใช้งานได้ (least privilege)</li>
+        <li>ROOT เฉพาะผู้ดูแลระบบตัวจริงเท่านั้น</li>
+        <li>verify ด้วยการ login จริง + ตรวจ System Log หลังแก้ทุกครั้ง</li>
+      </ul>
+    </div>
+    <div class="wcard">
+      <h3>❌ Don't</h3>
+      <ul>
+        <li>แก้ตาราง <span class="code">user_roles</span> หรือ database โดยตรง</li>
+        <li>ให้ทุกคนเป็น ROOT หรือ UBO_ADMIN เพื่อ "ให้จบ ๆ ไป"</li>
+        <li>ลืม login ใหม่หลัง deploy (สิทธิ์เก่าค้างใน token)</li>
+        <li>ปล่อยผู้ใช้ค้างใน Waiting Queue โดยไม่กำหนดกลุ่ม</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sec-foot"><span>UBO Verification System · RBAC Training</span><span>กด ▶ Presentation Mode เพื่อดูสไลด์ครบ 18 หน้า</span></div>
+</section>
+
+<!-- ======================= PRESENTATION ======================= -->
+<div id="presOverlay" onclick="if(event.target===this)exitPresentation()">
+  <div id="slideContainer">
+
+    <!-- ========== 1 TITLE ========== -->
+    <div class="pres-slide slide-title">
+      <div class="s-inner">
+        <div class="kicker">LH Bank · UBO Verification System</div>
+        <h1>การใช้งานระบบสิทธิ์ (RBAC)</h1>
+        <div class="lead">คู่มือกำหนดสิทธิ์สำหรับ <b>Admin</b> และ <b>IT Service Desk</b> — นำผู้ใช้เข้าระบบ สร้าง Role กำหนดสิทธิ์ Assign แบบรายบุคคลและแบบกลุ่ม พร้อมภาพหน้าจริงจากทุกขั้นตอน</div>
+        <div class="tmeta">
+          <span class="chip">42 Permission Codes</span>
+          <span class="chip">8 Roles · 7 Groups · 19 Users</span>
+          <span class="chip">ภาพจริง 30 ภาพ</span>
+          <span class="chip">3 พฤศจิกายน 2026</span>
+        </div>
+      </div>
+      <div class="conf"><span>Confidential — เอกสารภายในองค์กร</span><span>Training Deck · Admin &amp; ITSD</span></div>
+    </div>
+
+    <!-- ========== 2 AGENDA ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">วัตถุประสงค์</div>
+        <h2 class="s-title">สิ่งที่จะได้เรียนรู้ใน session นี้</h2>
+        <div class="s-sub">เป้าหมาย: ผู้ดำเนินการกำหนดสิทธิ์ (Admin/ITSD) เข้าใจแนวทางที่ถูกต้องและทำซ้ำได้เองทุกครั้ง</div>
+        <div class="s-body">
+          <div class="cards4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px">
+            <div class="pcard"><span class="ic">🧠</span><h3>แนวคิด &amp; โมเดล</h3><p>โมเดล 4 ชั้น User → Group → Role → Permission และกฎ resolve สิทธิ์ 3 ข้อ</p></div>
+            <div class="pcard"><span class="ic">👁️</span><h3>การมองเห็น</h3><p>Visibility matrix ว่าแต่ละ Role เห็นเมนูไหน พร้อม 3 สถานะของผู้ใช้จริง</p></div>
+            <div class="pcard"><span class="ic">🎬</span><h3>6 ตัวอย่างจริง</h3><p>นำเข้าผู้ใช้ · สร้าง Role · กำหนดสิทธิ์ · Assign เดี่ยว/กลุ่ม · ตรวจสอบผล</p></div>
+            <div class="pcard"><span class="ic"> Checklist</span><h3>กับดัก &amp; Checklist</h3><p>ข้อผิดพลาดที่พบบ่อยในระบบจริง + เช็คลิสต์ก่อนส่งมอบสิทธิ์</p></div>
+          </div>
+          <div class="rulebox"><span class="lk">📸</span><div>ภาพหน้าจอทั้งหมด capture จาก<b>ระบบจริง</b> (platform.microware.cloud) · ตัวเลขทุกตัว query จาก database จริง ณ วันที่ 3 พฤศจิกายน 2026</div></div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">2 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 3 WHY RBAC ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 1 · แนวคิด</div>
+        <h2 class="s-title">ทำไมต้องใช้ RBAC?</h2>
+        <div class="s-sub">ระบบ UBO มีข้อมูลการวิเคราะห์ผู้ถือหุ้นและรายงาน — สิทธิ์ที่ผิดพลาด = ข้อมูลรั่วหรือถูกแก้โดยไม่ตั้งใจ</div>
+        <div class="s-body">
+          <div class="cards3">
+            <div class="pcard"><span class="ic">🎯</span><h3>Least Privilege</h3><p>ให้สิทธิ์น้อยที่สุดที่ทำงานได้พอดี — พนักงานนักวิเคราะห์ไม่จำเป็นต้องเห็นหน้าตั้งค่าระบบหรือรายชื่อผู้ใช้ทั้งธนาคาร</p></div>
+            <div class="pcard"><span class="ic">🔍</span><h3>ตรวจสอบได้ (Audit)</h3><p>ทุกการเข้าสู่ระบบและแก้ไขสิทธิ์ถูกบันทึกใน System Log — ย้อนได้ว่าใคร ทำอะไร เมื่อไร</p></div>
+            <div class="pcard"><span class="ic">🛡️</span><h3>ลดความเสี่ยง</h3><p>จำกัดผลกระทบจากบัญชีถูกแชร์/ถูกเปิดเผย — แม้รหัสผ่านหลุด สิทธิ์ที่จำกัดจำกัดความเสียหาย</p></div>
+          </div>
+          <div class="rulebox"><span class="lk">🔑</span><div>กติกาทองของระบบนี้: <b>สิทธิ์มาทาง "กลุ่ม" (Group) เสมอ — ไม่ผูก Role กับตัวบุคคลโดยตรง</b> ตาราง <span class="code" style="background:#0b1a16">user_roles</span> ว่าง by design</div></div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">3 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 4 MODEL 4 LAYERS ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 1 · แนวคิด</div>
+        <h2 class="s-title">โมเดลสิทธิ์ 4 ชั้น</h2>
+        <div class="s-sub">User → Group → Role → Permission — เชื่อมกันด้วย 3 ตารางกลาง ตรวจ chain ได้ทุกขั้น</div>
+        <div class="s-body">
+          <div class="s-flow" style="display:flex;align-items:stretch;gap:0;background:#f8fbfa;border:1px solid #e2efec;border-radius:14px;padding:26px 22px">
+            <div style="flex:1;background:#fff;border:2px solid #01A982;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(1,169,130,.15)">
+              <div style="font-size:15px;color:#01A982;font-weight:800;letter-spacing:2px">USER</div>
+              <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">ผู้ใช้</div>
+              <div style="font-size:15px;color:#64748b">19 รายในระบบ</div>
+            </div>
+            <div style="width:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a">
+              <div style="font-size:26px">→</div><div class="code" style="font-size:14px">user_groups</div><div style="font-size:14.5px;color:#64748b">เป็นสมาชิกกลุ่ม</div>
+            </div>
+            <div style="flex:1;background:#fff;border:2px solid #0d9488;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(13,148,136,.15)">
+              <div style="font-size:15px;color:#0d9488;font-weight:800;letter-spacing:2px">GROUP</div>
+              <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">กลุ่มผู้ใช้</div>
+              <div style="font-size:15px;color:#64748b">7 กลุ่ม (Default อัตโนมัติ)</div>
+            </div>
+            <div style="width:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a">
+              <div style="font-size:26px">→</div><div class="code" style="font-size:14px">group_roles</div><div style="font-size:14.5px;color:#64748b">กลุ่มถือ Role</div>
+            </div>
+            <div style="flex:1;background:#fff;border:2px solid #0369a1;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(3,105,161,.15)">
+              <div style="font-size:15px;color:#0369a1;font-weight:800;letter-spacing:2px">ROLE</div>
+              <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">บทบาท</div>
+              <div style="font-size:15px;color:#64748b">8 บทบาท (ROOT…Test1)</div>
+            </div>
+            <div style="width:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a">
+              <div style="font-size:26px">→</div><div class="code" style="font-size:14px">role_permissions</div><div style="font-size:14.5px;color:#64748b">Role ถือสิทธิ์</div>
+            </div>
+            <div style="flex:1;background:#fff;border:2px solid #7c3aed;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(124,58,237,.15)">
+              <div style="font-size:15px;color:#7c3aed;font-weight:800;letter-spacing:2px">PERMISSION</div>
+              <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">สิทธิ์</div>
+              <div style="font-size:15px;color:#64748b">42 รหัส / 4 หมวด</div>
+            </div>
+          </div>
+          <div class="cards3">
+            <div class="pcard"><h3>⚠️ ไม่มี Direct Role</h3><p>ผู้ใช้จะมี Role ได้ "ผ่านกลุ่ม" เท่านั้น — ถ้าไม่อยู่ในกลุ่มใดเลย = ไม่มีสิทธิ์ใช้งาน</p></div>
+            <div class="pcard"><h3>🔁 หลายกลุ่มได้</h3><p>ผู้ใช้หนึ่งคนอยู่ได้หลายกลุ่มพร้อมกัน เช่น 6458 อยู่ Default + Test1</p></div>
+            <div class="pcard"><h3>🧩 แก้ที่จุดเดียว</h3><p>แก้สิทธิ์ที่ Role ครั้งเดียว → ทุกคนในกลุ่มที่ผูก Role นั้นได้รับทันที</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">4 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 5 RESOLVE RULES ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 1 · แนวคิด</div>
+        <h2 class="s-title">กฎการ resolve สิทธิ์ 3 ข้อ</h2>
+        <div class="s-sub">เข้าใจ 3 ข้อนี้ จะตอบคำถามผู้ใช้เรื่อง "ทำไมเห็นหน้านี้/ไม่เห็นหน้านี้" ได้ทันที</div>
+        <div class="s-body">
+          <div class="cards3">
+            <div class="pcard"><span class="ic">➕</span><h3>ข้อ 1 · รวมจากทุกกลุ่ม</h3><p>สิทธิ์ที่ผู้ใช้ได้รับจริง = ผลรวมของทุก Role จากทุกกลุ่มที่เป็นสมาชิก อยู่ 2 กลุ่ม = ได้สิทธิ์ของทั้ง 2 กลุ่ม</p></div>
+            <div class="pcard"><span class="ic">⬆️</span><h3>ข้อ 2 · Priority สูงสุดชนะ</h3><p>เมื่อกลุ่มหนึ่งมีหลาย Role ระบบใช้ตัวที่ <b>priority สูงสุด</b> (effective = max-only) เช่น ROOT P1000 &gt; UBO_ADMIN P100</p></div>
+            <div class="pcard"><span class="ic">🎫</span><h3>ข้อ 3 · ค้างอยู่ใน JWT</h3><p>สิทธิ์ถูกฝักใน token ตอน login — ระบบ deploy เพิ่มสิทธิ์ใหม่ ผู้ใช้เก่าต้อง <b>login ใหม่</b> ไม่งั้นเจอหน้าล็อกโดยไม่ทราบสาเหตุ</p></div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl-s">
+            <tr><th style="width:300px">สถานการณ์</th><th>วิธีตรวจ</th></tr>
+            <tr><td>ผู้ใช้ถาม "ทำไมไม่เห็นเมนู X"</td><td>ดู Role ของกลุ่มที่อยู่ → เช็คว่า Role นั้นมีรหัสสิทธิ์ของเมนู X ไหม</td></tr>
+            <tr><td>เห็นหน้าล็อกทั้งที่ DB มีสิทธิ์ครบ</td><td>สิทธิ์เก่าค้างใน token → <b>ออกจากระบบแล้ว login ใหม่</b></td></tr>
+            <tr><td>สิทธิ์กลุ่ม A หายหลังอยู่ 2 กลุ่ม</td><td>ระบบใช้ max-only — เช็ค priority ของ Role ในแต่ละกลุ่ม</td></tr>
+          </table></div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">5 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 6 PERMISSION CATALOG ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 1 · แนวคิด</div>
+        <h2 class="s-title">คลังสิทธิ์: 42 Permission Codes / 4 หมวด</h2>
+        <div class="s-sub">รหัสสิทธิ์รูปแบบ <span class="code">หมวด:การกระทำ</span> — ใช้รหัสเหล่านี้อ่านหน้า Denied ได้ทันที</div>
+        <div class="s-body">
+          <div class="tbl-wrap"><table class="tbl-s">
+            <tr><th style="width:190px">หมวด (feature)</th><th style="width:110px" class="ctr">จำนวน</th><th>ตัวอย่างรหัสสิทธิ์</th><th style="width:330px">ควบคุมอะไร</th></tr>
+            <tr><td><b>ubo</b></td><td class="ctr"><b>7</b></td><td><span class="code">ubo:search</span> <span class="code">ubo:view</span> <span class="code">ubo:create</span> <span class="code">ubo:export</span> <span class="code">ubo:view_all_paths</span></td><td>ค้นหา/วิเคราะห์/ส่งออกรายงาน UBO</td></tr>
+            <tr><td><b>history</b></td><td class="ctr"><b>4</b></td><td><span class="code">history:view</span> <span class="code">history:detail</span> <span class="code">history:export</span> <span class="code">history:delete</span></td><td>ดู/ส่งออก/ลบประวัติการค้นหา</td></tr>
+            <tr><td><b>waiting</b></td><td class="ctr"><b>2</b></td><td><span class="code">waiting:view</span> <span class="code">waiting:assign_group</span></td><td>เห็นคิวผู้ใช้รอสิทธิ์ + กำหนดกลุ่ม</td></tr>
+            <tr><td><b>settings</b></td><td class="ctr"><b>29</b></td><td><span class="code">user:view</span> <span class="code">group:create</span> <span class="code">role:update</span> <span class="code">rbac:manage</span> <span class="code">log:view</span> <span class="code">aml:manage</span> <span class="code">settings:configuration_view</span></td><td>จัดการผู้ใช้/กลุ่ม/Role/Log/ตั้งค่า/AML</td></tr>
+          </table></div>
+          <div class="cards3">
+            <div class="pcard"><h3>ROOT = ครบ 42</h3><p>ผู้ใช้ ROOT (P9999) ได้ครบทุก code — ใช้เป็นมาตรวัดว่า Role อื่นขาดอะไร</p></div>
+            <div class="pcard"><h3>อ่าน Denied เป็น</h3><p>ข้อความ <span class="code">Missing required permission: user:view</span> แปลว่าผู้ใช้ไม่มี code <span class="code">user:view</span> → ไปดู Role ของกลุ่ม</p></div>
+            <div class="pcard"><h3>เพิ่มสิทธิ์ใหม่ = deploy</h3><p>code ใหม่ถูกเพิ่มผ่านระบบ deploy — ทุก session เก่าต้อง login ใหม่เพื่อรับ claim ชุดใหม่</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">6 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 7 ROLES x GROUPS ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 1 · แนวคิด</div>
+        <h2 class="s-title">Roles &amp; Groups ในระบบจริง</h2>
+        <div class="s-sub">8 บทบาท / 7 กลุ่ม — กลุ่มมาตรฐานผูก Role 1:1 ส่วน Test1 คือตัวอย่างที่สร้างเอง</div>
+        <div class="s-body">
+          <div class="tbl-wrap"><table class="tbl-s">
+            <tr><th style="width:250px">Role</th><th style="width:110px" class="ctr">Priority</th><th style="width:130px" class="ctr">สิทธิ์</th><th style="width:250px">กลุ่มที่ผูก</th><th>ลักษณะงาน</th></tr>
+            <tr><td><b>ROOT</b></td><td class="ctr">1000</td><td class="ctr"><b>42</b></td><td>Administrator</td><td>ผู้ดูแลระบบตัวจริง — ครบทุกอย่าง</td></tr>
+            <tr><td><b>UBO_ADMIN</b></td><td class="ctr">100</td><td class="ctr"><b>30</b></td><td>Administrators</td><td>บริหาร RBAC/Log/ผู้ใช้ (ไม่มี AML &amp; ตั้งค่าระบบ)</td></tr>
+            <tr><td><b>UBO_ANALYST</b></td><td class="ctr">70</td><td class="ctr">10</td><td>Analysts</td><td>ค้นหา/สร้าง/ส่งออกการวิเคราะห์ UBO</td></tr>
+            <tr><td><b>UBO_REVIEWER</b></td><td class="ctr">40</td><td class="ctr">10</td><td>Reviewers</td><td>ตรวจสอบผลวิเคราะห์ (ชุดสิทธิ์เท่ากับ Analyst)</td></tr>
+            <tr><td><b>Test1</b> <span class="pill warn">สร้างเอง</span></td><td class="ctr">21</td><td class="ctr">2</td><td>Test1</td><td>ตัวอย่างจากจริง: settings:view + settings:update</td></tr>
+            <tr><td><b>VIEWER</b></td><td class="ctr">10</td><td class="ctr">3</td><td>Viewers</td><td>ดูประวัติ + ส่งออก อย่างเดียว</td></tr>
+            <tr><td><b>DEFAULT</b></td><td class="ctr">5</td><td class="ctr">1</td><td>Default (อัตโนมัติ)</td><td>history:view เท่านั้น — ยังถือว่า "รอสิทธิ์"</td></tr>
+          </table></div>
+          <div class="cards2">
+            <div class="pit"><span class="ic">⚠️</span><div class="tx"><b>Role ตกค้าง "Root Administrator" (0 สิทธิ์)</b> — มีในตารางแต่ไม่ผูกกลุ่มและไม่มีสิทธิ์ใด ๆ เลย = ซากจากอดีต ห้ามใช้ และอย่าสับสนกับ ROOT</div></div>
+            <div class="pit"><span class="ic">📌</span><div class="tx"><b>กลุ่มมาตรฐานส่วนใหญ่ยังไม่มีสมาชิก</b> (Administrators/Analysts/Reviewers/Viewers = 0 คน) — ทุกอย่างชี้ว่าตอนนี้ใช้ Administrator + Test1 + Default เป็นหลัก</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">7 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 8 VISIBILITY MATRIX ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 2 · การมองเห็น</div>
+        <h2 class="s-title">ใครมองเห็นอะไร — Visibility Matrix</h2>
+        <div class="s-sub">เมนู Topbar ถูกกรองจากสิทธิ์ทันทีที่ login ✓ = เห็นเมนู / ✗ = ไม่เห็น / ⛔ = เห็นหน้า Waiting เท่านั้น</div>
+        <div class="s-body">
+          <div class="tbl-wrap"><table class="tbl-s">
+            <tr><th style="width:340px">เมนู / หน้า</th><th class="ctr">ROOT</th><th class="ctr">UBO_ADMIN</th><th class="ctr">UBO_ANALYST</th><th class="ctr">VIEWER</th><th class="ctr">DEFAULT / Waiting</th></tr>
+            <tr><td>UBO Analysis</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr mut">⛔</td></tr>
+            <tr><td>History</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr mut">⛔</td></tr>
+            <tr><td>Waiting Queue (คิวกำหนดสิทธิ์)</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr no">✗</td><td class="ctr no">✗</td><td class="ctr mut">⛔</td></tr>
+            <tr><td>User List</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr no">✗</td><td class="ctr no">✗</td><td class="ctr mut">⛔</td></tr>
+            <tr><td>User Groups / Roles &amp; Features</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr no">✗</td><td class="ctr no">✗</td><td class="ctr mut">⛔</td></tr>
+            <tr><td>Activity / System Log</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr no">✗</td><td class="ctr no">✗</td><td class="ctr mut">⛔</td></tr>
+            <tr><td>Waiting Page Setting</td><td class="ctr ok">✓</td><td class="ctr ok">✓</td><td class="ctr no">✗</td><td class="ctr no">✗</td><td class="ctr mut">⛔</td></tr>
+            <tr><td>Configuration / General / API</td><td class="ctr ok">✓</td><td class="ctr no">✗</td><td class="ctr no">✗</td><td class="ctr no">✗</td><td class="ctr mut">⛔</td></tr>
+          </table></div>
+          <div class="small-note">※ UBO_ADMIN ไม่มีรหัส <span class="code">settings:view</span> / <span class="code">configuration_view</span> จึงไม่เห็นหน้า Configuration — เป็นพฤติกรรมจริงตามสิทธิ์ปัจจุบัน · ผู้ใช้สถานะ ⛔ ถูกกันไว้ที่หน้า Waiting เท่านั้น ทุก URL</div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">8 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 9 THREE STATES ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 2 · การมองเห็น</div>
+        <h2 class="s-title">3 สถานะของผู้ใช้ในระบบ (ภาพจริง)</h2>
+        <div class="s-sub">เทียบให้เห็นชัด ๆ ว่าผู้ใช้แต่ละสถานะจะเจอหน้าไหนเมื่อ login เข้ามา</div>
+        <div class="s-body">
+          <div class="gcols3">
+            <div class="col" style="gap:12px">
+              <div class="pill red" style="align-self:flex-start">สถานะ 1 · ยังไม่มีสิทธิ์</div>
+              <figure class="shot"><img src="img/15_waiting_screen.jpg" alt="Waiting screen"><figcaption>ไม่มี Role หรือมีแค่ DEFAULT → ทุก URL พาไปหน้า <b>กำลังรอการกำหนดสิทธิ์</b></figcaption></figure>
+            </div>
+            <div class="col" style="gap:12px">
+              <div class="pill warn" style="align-self:flex-start">สถานะ 2 · มีสิทธิ์ไม่ครบ</div>
+              <figure class="shot"><img src="img/18_denied_userlist_toast.jpg" alt="Denied toast"><figcaption>เปิดหน้าที่ไม่มีสิทธิ์ → ได้ข้อความ <span class="code">Missing required permission: user:view</span> + ข้อมูลว่าง</figcaption></figure>
+            </div>
+            <div class="col" style="gap:12px">
+              <div class="pill" style="align-self:flex-start">สถานะ 3 · มีสิทธิ์ตาม Role</div>
+              <figure class="shot"><img src="img/16_roleuser_home.jpg" alt="Role user home"><figcaption>Role ครบตามหน้าที่ → เห็นเฉพาะเมนูที่สิทธิ์ครอบคลุม ใช้งานได้ตามปกติ</figcaption></figure>
+            </div>
+          </div>
+          <div class="rulebox"><span class="lk">⏳</span><div>ผู้ใช้ที่เพิ่งเข้าระบบครั้งแรกจะได้กลุ่ม <b>Default</b> อัตโนมัติ แต่ระบบยังถือว่า "รอสิทธิ์" อยู่ → ต้อง Admin assign กลุ่มที่มี Role จริงเท่านั้นจึงจะใช้งานได้</div></div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">9 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 10 EXAMPLE 1: IMPORT USER ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING · ตัวอย่างที่ 1</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 3 · ตัวอย่างจริง</div>
+        <h2 class="s-title">① นำผู้ใช้เข้าระบบ</h2>
+        <div class="s-sub">สองช่องทาง: ผ่าน AD (login ครั้งแรก) หรือ import CSV เป็นกลุ่ม — ทั้งคู่จบด้วยการรอ Admin กำหนดกลุ่ม</div>
+        <div class="s-body">
+          <div class="row" style="flex:1">
+            <div class="col" style="width:640px">
+              <div class="steps">
+                <div class="step"><span class="n">1</span><span class="tx">ผู้ใช้มีบัญชีใน <b>AD/HR</b> อยู่แล้ว (พนักงานทุกคน) — ระบบไม่สร้างบัญชีเอง</span></div>
+                <div class="step"><span class="n">2</span><span class="tx">login ครั้งแรกด้วย <b>Employee ID + รหัสผ่าน AD</b> → ระบบ sync ข้อมูลเข้า UBO และมอบกลุ่ม <b>Default</b> ให้อัตโนมัติ</span></div>
+                <div class="step"><span class="n">3</span><span class="tx">ผู้ใช้ยังถูกกันที่หน้า <b>Waiting</b> → ปรากฏใน <b>Waiting Queue</b> ของ Admin พร้อมปุ่ม Assign Group</span></div>
+                <div class="step"><span class="n">4</span><span class="tx">ทางลัดปริมาณเยอะ: <b>Import Users (CSV)</b> คอลัมน์ No, User ID, Group Name, Role — ใส่กลุ่ม+Role ตั้งแต่ต้นได้ทันที</span></div>
+              </div>
+              <figure class="shot"><img src="img/crop_import_csv.png" alt="Import CSV"><figcaption>การ์ด Import Users (CSV) — ดาวน์โหลด template กรอกแล้วอัปโหลดกลับได้เลย</figcaption></figure>
+            </div>
+            <div class="col" style="flex:1">
+              <figure class="shot" style="flex:1"><img src="img/01_login.jpg" style="height:328px;object-fit:cover;object-position:top" alt="Login page"><figcaption>หน้า login จริง — ใช้รหัสผ่าน AD (เมื่อหมดอายุ/ถูก lock = "Invalid credentials")</figcaption></figure>
+              <figure class="shot" style="flex:1"><img src="img/08_waiting_queue.jpg" style="height:328px;object-fit:cover;object-position:top" alt="Waiting queue"><figcaption>Waiting Queue ของ Admin — ผู้ใช้รอ Assign (สถานะ "ไม่มี Role")</figcaption></figure>
+            </div>
+          </div>
+          <div class="note">⚠️ จุดที่ต้องระวัง: ผู้ใช้ที่ไม่มีใน HR dump = login ไม่ได้ ("User not found in AD") · รหัสผ่านหมดอายุ = "Invalid credentials" ทั้งที่พิมพ์ถูก — ต้องเช็คที่ AD ก่อน</div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">10 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 11 EXAMPLE 2: CREATE ROLE ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING · ตัวอย่างที่ 2</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 3 · ตัวอย่างจริง</div>
+        <h2 class="s-title">② สร้าง Role ใหม่</h2>
+        <div class="s-sub">หน้า <b>Settings → Roles &amp; Features</b> (ต้องมีสิทธิ์ <span class="code">rbac:manage</span>) — สร้างเสร็จยังไม่มีใครได้สิทธิ์ จนกว่าจะผูกกับกลุ่ม</div>
+        <div class="s-body">
+          <div class="row" style="flex:1">
+            <div class="col" style="width:600px">
+              <div class="steps">
+                <div class="step"><span class="n">1</span><span class="tx">กรอก <b>ชื่อสิทธิ์</b> (ห้ามซ้ำกับระบบ เช่น ROOT/DEFAULT) + <b>Priority</b> + คำอธิบาย</span></div>
+                <div class="step"><span class="n">2</span><span class="tx">เลือก <b>Features เริ่มต้น</b> ได้จาก 4 หมวด — จะเลือกตอนนี้หรือค่อยเพิ่มทีหลังก็ได้</span></div>
+                <div class="step"><span class="n">3</span><span class="tx">กด <b>สร้างสิทธิ์</b> → การ์ด Role ใหม่ปรากฏในรายการ (ตัวอย่างจริง: <b>Test1</b> P21)</span></div>
+                <div class="step"><span class="n">4</span><span class="tx"><b>Priority สำคัญ:</b> ระบบใช้ตัวที่สูงสุดเมื่อผู้ใช้อยู่หลายกลุ่ม — ตั้งให้ต่ำกว่า ROOT เสมอ</span></div>
+              </div>
+              <div class="note">💡 ตัวอย่างจริงในระบบ: Role <b>Test1</b> (P21, 2 สิทธิ์) ถูกสร้างและผูกกับกลุ่ม Test1 ที่มีสมาชิก 2 คน — ใช้เป็นต้นแบบได้</div>
+            </div>
+            <div class="col" style="flex:1">
+              <figure class="shot"><img src="img/crop_create_role.png" alt="Create role form"><figcaption>ฟอร์ม "สร้าง Role" — ชื่อ + Priority + คำอธิบาย + เลือก Features 4 หมวด</figcaption></figure>
+              <figure class="shot"><img src="img/crop_role_cards.png" alt="Role cards"><figcaption>การ์ด Role ทั้งหมด เรียงตาม Priority — คลิกการ์ดเพื่อดู/แก้รายละเอียด</figcaption></figure>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">11 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 12 EXAMPLE 3: ASSIGN PERMISSIONS ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING · ตัวอย่างที่ 3</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 3 · ตัวอย่างจริง</div>
+        <h2 class="s-title">③ กำหนดสิทธิ์ให้ Role</h2>
+        <div class="s-sub">คลิกการ์ด Role → panel รายละเอียด → ติ๊ก features ตามหมวด → <b>บันทึกสิทธิ์</b> — มีผลกับทุกคนในกลุ่มที่ผูก Role นั้นทันที</div>
+        <div class="s-body">
+          <div class="row" style="flex:1">
+            <div class="col" style="width:560px">
+              <div class="steps">
+                <div class="step"><span class="n">1</span><span class="tx">เปิด panel แล้วดู <b>"Groups ที่ใช้ Role นี้"</b> ก่อน — รู้ว่าใครจะได้รับผลกระทบ</span></div>
+                <div class="step"><span class="n">2</span><span class="tx">ติ๊กเฉพาะ <b>features ที่จำเป็น</b> 4 หมวด (UBO / History / Waiting / Settings) — หลัก least privilege</span></div>
+                <div class="step"><span class="n">3</span><span class="tx">กด <b>บันทึกสิทธิ์</b> → เทียบจำนวน features กับ Role อื่นเป็น sanity check</span></div>
+              </div>
+              <div class="tbl-wrap"><table class="tbl-s">
+                <tr><th>เทียบชุดสิทธิ์จริง</th><th class="ctr">features</th></tr>
+                <tr><td>UBO_ADMIN</td><td class="ctr"><b>30</b></td></tr>
+                <tr><td>UBO_ANALYST / UBO_REVIEWER</td><td class="ctr"><b>10</b></td></tr>
+                <tr><td>VIEWER</td><td class="ctr"><b>3</b></td></tr>
+                <tr><td>DEFAULT</td><td class="ctr"><b>1</b></td></tr>
+              </table></div>
+            </div>
+            <div class="col" style="flex:1">
+              <figure class="shot" style="flex:1"><img class="fit-med" src="img/crop_role_detail.png" alt="Role detail feature columns"><figcaption>Panel แก้ Role — ซ้าย: กลุ่มที่ใช้ + ชื่อ/Priority · ขวา: ติ๊ก features 4 หมวด แล้วกดบันทึกสิทธิ์</figcaption></figure>
+            </div>
+          </div>
+          <div class="note">⚠️ แก้ Role = แก้ให้ทุกคนในกลุ่ม — ถ้าต้องการสิทธิ์เฉพาะบุคคล ให้สร้างกลุ่มใหม่ผูก Role แยก แล้วใส่เฉพาะคนนั้น (ดูตัวอย่างที่ 5)</div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">12 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 13 EXAMPLE 4: ASSIGN SINGLE ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING · ตัวอย่างที่ 4</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 3 · ตัวอย่างจริง</div>
+        <h2 class="s-title">④ Assign สิทธิ์ให้ผู้ใช้แบบรายบุคคล</h2>
+        <div class="s-sub">สองทางหลัก: จาก <b>Waiting Queue</b> (เร็วที่สุด) หรือเพิ่มเป็น <b>สมาชิกกลุ่ม</b> ในหน้า User Groups</div>
+        <div class="s-body">
+          <div class="row" style="flex:1">
+            <div class="col" style="width:640px">
+              <div class="steps">
+                <div class="step"><span class="n">1</span><span class="tx">ทาง A — หน้า <b>Waiting Queue</b>: ติ๊กผู้ใช้ 1 คน (หรือกด Assign Group ที่แถว) → เลือกกลุ่มปลายทาง → กด <b>Assign Group</b></span></div>
+                <div class="step"><span class="n">2</span><span class="tx">ทาง B — หน้า <b>User Groups</b>: เปิดการ์ดกลุ่ม → โซน "สมาชิกในกลุ่ม" → ติ๊กชื่อที่ต้องการ → กด <b>บันทึกสมาชิก</b></span></div>
+                <div class="step"><span class="n">3</span><span class="tx"><b>Verify ทันที:</b> ให้ผู้ใช้ login ใหม่ แล้วเช็คว่าเห็นเมนู/หน้าตรงตามที่ออกแบบไว้</span></div>
+              </div>
+              <figure class="shot"><img src="img/crop_assign_bar.png" alt="Assign bar"><figcaption>แถบ assign — "เลือก 1 คน" + เลือก Group (ผูก Role ไว้แล้ว) + ปุ่ม Assign Group (ยังไม่กดยืนยัน)</figcaption></figure>
+              <div class="note">💡 ระบบไม่ให้ assign กับกลุ่มที่ยังไม่มี Role — dropdown แสดงเฉพาะกลุ่มที่ผูก Role แล้วเท่านั้น</div>
+            </div>
+            <div class="col" style="flex:1">
+              <figure class="shot" style="flex:1"><img class="fit-med" src="img/crop_group_detail.png" alt="Group detail members"><figcaption>การ์ดกลุ่ม Test1 (จริง) — สิทธิ์ที่กลุ่มถือ + สมาชิก 2 คน + Effective Permissions ด้านล่าง</figcaption></figure>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">13 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 14 EXAMPLE 5: ASSIGN GROUP ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING · ตัวอย่างที่ 5</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 3 · ตัวอย่างจริง</div>
+        <h2 class="s-title">⑤ Assign แบบกลุ่ม (Onboard ทีม)</h2>
+        <div class="s-sub">ออกแบบกลุ่ม = ออกแบบ "ตำแหน่ง/ทีม" — สร้างครั้งเดียว ใช้ซ้ำได้ตลอด ไม่ต้องมานั่งไล่ทีละคน</div>
+        <div class="s-body">
+          <div class="cards3">
+            <div class="pcard">
+              <h3>ทาง A · สร้างกลุ่มใหม่</h3>
+              <p>ตั้งชื่อกลุ่มตามทีม + ติ๊ก Role ที่กลุ่มถือ (เลือกได้หลาย Role) → กดสร้าง → เพิ่มสมาชิกทีละหลายคนภายหลัง</p>
+              <figure class="shot"><img src="img/crop_create_group.png" alt="Create group"><figcaption>ฟอร์มสร้าง User Group + เลือก Roles</figcaption></figure>
+            </div>
+            <div class="pcard">
+              <h3>ทาง B · Assign หลาย ๆ คนพร้อมกัน</h3>
+              <p>Waiting Queue → ติ๊ก select-all หรือหลายแถว → เลือกกลุ่มปลายทางเดียว → Assign Group ครั้งเดียวจบ</p>
+              <figure class="shot"><img src="img/crop_assign_bar.png" alt="Bulk assign"><figcaption>แถบ assign หลายคน — "เลือก N คน" แล้วกด Assign Group</figcaption></figure>
+            </div>
+            <div class="pcard">
+              <h3>ทาง C · Import CSV</h3>
+              <p>จำนวนเยอะ (ย้ายทีม/ปรับโครงสร้าง) → ใช้ template: No, User ID, Group Name, Role — แถวไหนกลุ่ม/Role ไม่พบจะขึ้น error ให้แก้แล้วส่งใหม่</p>
+              <figure class="shot"><img src="img/crop_import_csv.png" alt="CSV import"><figcaption>Import Users (CSV) — เหมาะกับปริมาณมาก</figcaption></figure>
+            </div>
+          </div>
+          <div class="rulebox"><span class="lk">🏗️</span><div>แนวทางที่ถูกต้อง: <b>กลุ่ม = ตำแหน่ง/ทีม</b> (เช่น Analysts, Reviewers) · <b>Role = ชุดสิทธิ์ของงานนั้น</b> · คนย้ายทีม = เปลี่ยนกลุ่ม ไม่ต้องแก้สิทธิ์ทีละคน</div></div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">14 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 15 EXAMPLE 6: VERIFY ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING · ตัวอย่างที่ 6</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 3 · ตัวอย่างจริง</div>
+        <h2 class="s-title">⑥ ตรวจสอบยืนยันผล (Verification)</h2>
+        <div class="s-sub">กำหนดสิทธิ์แล้วต้องพิสูจน์ 3 ชั้น — ทดสอบบัญชีจริง ทดลองหน้าต้องห้าม และตรวจ audit log</div>
+        <div class="s-body">
+          <div class="row" style="flex:1">
+            <div class="col" style="width:760px">
+              <div class="steps">
+                <div class="step"><span class="n">1</span><span class="tx"><b>Login ด้วยบัญชีผู้ใช้จริง</b> → เช็ค Topbar ว่าเห็นเฉพาะเมนูที่ออกแบบไว้ (เช่น ผู้ใช้ Test1 เห็น Configuration/General/API แต่ไม่เห็น User List/Logs)</span></div>
+                <div class="step"><span class="n">2</span><span class="tx"><b>ทดลองหน้าที่ต้องห้าม</b> → ต้องเจอหน้าล็อก/ข้อความสิทธิ์ ไม่ใช่ข้อมูลรั่ว (ภาพขวา: ทดสอบ System Log)</span></div>
+                <div class="step"><span class="n">3</span><span class="tx"><b>ตรวจ System Log</b> → รายการ "เข้าสู่ระบบ SUCCESS" ของผู้ใช้คนนั้น + รายการแก้ไขสิทธิ์ก่อนหน้า</span></div>
+              </div>
+              <div class="chain">Permission chain — เช็ค 4 ขั้นถ้ายังไม่ตรง:<br>
+1. users → ผู้ใช้ active? <b>employee_id</b> ตรงไหม (ระบบ normalize P9999 → 9999)<br>
+2. user_groups → อยู่ในกลุ่มที่คาดหวังไหม<br>
+3. group_roles → กลุ่มผูก Role ที่คาดหวังไหม<br>
+4. role_permissions → Role มีรหัสสิทธิ์ครบไหม</div>
+            </div>
+            <div class="col" style="flex:1">
+              <figure class="shot"><img src="img/crop_denied_lock.png" alt="Denied lock"><figcaption>ผลทดสอบหน้าต้องห้าม: หน้าล็อก "คุณไม่มีสิทธิ์เข้าถึง System Log" = สิทธิ์ทำงานถูกต้อง</figcaption></figure>
+              <figure class="shot" style="flex:1"><img class="fit-top" src="img/crop_system_log.png" alt="System log"><figcaption>System Log จริง — เห็นเหตุการณ์เข้าสู่ระบบ SUCCESS/FAILED ของทุกคนพร้อม timestamp</figcaption></figure>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">15 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 16 DO DONT ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 4 · สรุป</div>
+        <h2 class="s-title">Do's &amp; Don'ts — หลักกำหนดสิทธิ์ที่ถูกต้อง</h2>
+        <div class="s-sub">สรุปพฤติกรรมที่ควรทำและควรเลี่ยง เก็บไว้เป็นบรรทัดฐานของทีม Admin/ITSD</div>
+        <div class="s-body">
+          <div class="dodont">
+            <div class="dd do">
+              <h3>✅ ควรทำ</h3>
+              <ul>
+                <li>ผูกสิทธิ์ผ่าน<b>กลุ่ม</b> เสมอ — ไม่ผูกกับตัวบุคคล</li>
+                <li>ให้<b>Role ต่ำสุด</b>ที่ทำงานได้ (least privilege) — เริ่มจากกลุ่มมาตรฐานก่อน</li>
+                <li>สร้างกลุ่มแยกเมื่อต้องการสิทธิ์เฉพาะทีม/เฉพาะบุคคล</li>
+                <li>login ทดสอบด้วยบัญชีจริง<b>ทุกครั้ง</b>หลังแก้สิทธิ์</li>
+                <li>ตรวจ <b>System Log</b> ย้อนหลังเป็นหลักฐานทุกครั้ง</li>
+                <li>ให้ ROOT เฉพาะผู้ดูแลระบบตัวจริง (ปัจจุบัน 1 คน)</li>
+              </ul>
+            </div>
+            <div class="dd dont">
+              <h3>❌ ไม่ควรทำ</h3>
+              <ul>
+                <li>แก้ database ตรง ๆ (user_groups/group_roles/role_permissions)</li>
+                <li>ให้ทุกคนเป็น ROOT/UBO_ADMIN "เพื่อให้จบ ๆ ไป"</li>
+                <li>ใช้ Role <b>Root Administrator ที่มี 0 สิทธิ์</b> (ของตกค้าง)</li>
+                <li>สร้าง Role ชื่อซ้ำ/เขียนสิทธิ์ปนกันโดยไม่ดู priority</li>
+                <li>ปล่อยผู้ใช้ค้างใน Waiting Queue เป็นสัปดาห์</li>
+                <li>ลืม<b> login ใหม่</b>หลัง deploy → แล้วบอกว่า "ระบบเสีย"</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">16 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 17 PITFALLS ========== -->
+    <div class="pres-slide">
+      <div class="s-top"></div>
+      <div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>
+      <div class="s-inner">
+        <div class="s-label">องค์ที่ 4 · สรุป</div>
+        <h2 class="s-title">กับดักที่พบบ่อยในระบบจริง</h2>
+        <div class="s-sub">เคสเหล่านี้เกิดแล้วในระบบ UBO — รู้ไว้จะช่วยย่นเวลา debug ของผู้ใช้ได้ทันที</div>
+        <div class="s-body">
+          <div class="cards2" style="gap:18px">
+            <div class="pit"><span class="ic">🎫</span><div class="tx"><b>หน้าล็อกทั้งที่ DB ครบ</b> — สิทธิ์เก่าค้างใน JWT หลัง deploy → แก้: ออกจากระบบ login ใหม่ (ไม่ใช่ปัญหาสิทธิ์)</div></div>
+            <div class="pit"><span class="ic">⏳</span><div class="tx"><b>ผู้ใช้ค้างหน้า Waiting</b> — ไม่มีกลุ่ม หรือมีแค่กลุ่ม Default (Role DEFAULT ยังถือว่ารอสิทธิ์) → แก้: assign กลุ่มที่มี Role จริง</div></div>
+            <div class="pit"><span class="ic">🔢</span><div class="tx"><b>P9999 vs 9999</b> — ระบบ normalize เลขหน้า P ออก ทำให้ database อาจมี 2 แถวซ้ำ → ใช้ Employee ID รูปแบบเดียวกันทุกครั้ง</div></div>
+            <div class="pit"><span class="ic">👻</span><div class="tx"><b>Role ผี "Root Administrator"</b> — มี 0 สิทธิ์ ไม่ผูกกลุ่ม เป็นของตกค้าง อย่าเลือกมาใช้ และอย่าสับสนกับ ROOT</div></div>
+            <div class="pit"><span class="ic">🚨</span><div class="tx"><b>อ่านข้อความ Denied ให้เป็น</b> — <span class="code">Missing required permission: log:view</span> บอกเป๊ะว่าขาด code ไหน → ไปเช็ค Role ของกลุ่มผู้ใช้คนนั้น</div></div>
+            <div class="pit"><span class="ic">📁</span><div class="tx"><b>Import CSV row error</b> — แถวที่ระบุ Group/Role ไม่มีจริงจะขึ้น error และถูกข้าม → แก้ชื่อให้ตรงกับที่สร้างไว้แล้วส่งใหม่</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">17 / 18</span></div>
+      <div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>
+    </div>
+
+    <!-- ========== 18 CHECKLIST + THANKS ========== -->
+    <div class="pres-slide thanks">
+      <div class="s-inner">
+        <div class="kicker" style="letter-spacing:5px;font-size:16px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:800;margin-bottom:14px">ก่อนส่งมอบสิทธิ์ทุกครั้ง</div>
+        <h2>เช็คลิสต์ 6 ข้อ + ขอบคุณครับ</h2>
+        <div class="checklist" style="max-width:1400px;margin:26px auto 0;text-align:left;width:100%">
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ระบุผู้ใช้/ทีม → เลือกกลุ่มที่ผูก Role ถูกต้อง (ไม่ใช่กลุ่ม Default)</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>Role ที่ให้ไปต่ำสุดพอใช้งาน (least privilege) — ไม่จับ ROOT/ADMIN ยัดให้</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ผู้ใช้ login ใหม่ แล้วเห็นเมนูตรงตาม design</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ทดลองหน้าต้องห้าม → เจอหน้าล็อก/ข้อความสิทธิ์ (ไม่ใช่ข้อมูลรั่ว)</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>System Log บันทึกเหตุการณ์ถูกต้อง (login + แก้ไขสิทธิ์)</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ไม่มีผู้ใช้ค้าง Waiting Queue โดยไม่จำเป็น</div>
+        </div>
+        <p style="margin-top:34px;font-size:21px;color:#cffff0">คำถาม / ขอสิทธิ์เพิ่ม → ติดต่อทีม Admin ผ่านระบบ · ทุกการแก้ไขถูกบันทึกใน System Log</p>
+      </div>
+      <div class="conf" style="position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.20);padding:14px 96px;font-size:14px;color:#bfe9dd;display:flex;justify-content:space-between"><span>UBO Verification System · RBAC Training</span><span>18 / 18</span></div>
+    </div>
+
+  </div><!-- /slideContainer -->
+
+  <div class="pres-controls">
+    <button onclick="prevSlide()">◀ ก่อนหน้า</button>
+    <span class="counter" id="slideCounter">1 / 18</span>
+    <button onclick="nextSlide()">ถัดไป ▶</button>
+    <button onclick="toggleEditMode()">✏️</button>
+    <button onclick="exitPresentation()">✕ ออก</button>
+  </div>
+</div>
+
+<!-- ======================= EDIT BAR ======================= -->
+<div id="editBar">
+  <span class="badge">EDIT MODE</span>
+  <button onclick="addSlide()">＋ เพิ่มสไลด์</button>
+  <button onclick="saveLocal()">💾 Save</button>
+  <button onclick="exportHtml()">⬇ Export HTML</button>
+  <button onclick="toggleEditMode()">ปิด Edit</button>
+  <span style="font-size:13px;color:#9fb3d1">คลิกข้อความในสไลด์เพื่อแก้ไขโดยตรง</span>
+</div>
+
+<script>
+/* ============ state ============ */
+let totalSlides = document.querySelectorAll('.pres-slide').length;
+let current = 0;
+let editMode = false;
+const overlay = document.getElementById('presOverlay');
+const container = document.getElementById('slideContainer');
+
+/* ============ scaling ============ */
+function scaleSlides(){
+  const scale = Math.min(container.clientWidth / 1920, container.clientHeight / 1080);
+  const ox = (container.clientWidth - 1920 * scale) / 2;
+  const oy = (container.clientHeight - 1080 * scale) / 2;
+  document.querySelectorAll('.pres-slide').forEach(s => {
+    s.style.width = '1920px';
+    s.style.height = '1080px';
+    s.style.transformOrigin = 'top left';
+    s.style.transform = 'scale(' + scale + ')';
+    s.style.left = ox + 'px';
+    s.style.top = oy + 'px';
+  });
+}
+window.addEventListener('resize', scaleSlides);
+if (window.MutationObserver) {
+  new MutationObserver(scaleSlides).observe(container, {childList:true, subtree:true});
+}
+
+/* ============ navigation ============ */
+function showSlide(i){
+  const slides = document.querySelectorAll('.pres-slide');
+  if (i < 0) i = 0;
+  if (i >= slides.length) i = slides.length - 1;
+  current = i;
+  slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+  totalSlides = slides.length;
+  document.getElementById('slideCounter').textContent = (i + 1) + ' / ' + totalSlides;
+  scaleSlides();
+}
+function nextSlide(){ showSlide(current + 1); }
+function prevSlide(){ showSlide(current - 1); }
+/* alias used by the QA harness (1-based) */
+function gotoSlide(i){ showSlide(i - 1); }
+function enterPresentation(){
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  showSlide(current);
+  try { if (overlay.requestFullscreen) overlay.requestFullscreen().catch(()=>{}); } catch(e){}
+}
+function exitPresentation(){
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+  try { if (document.fullscreenElement) document.exitFullscreen(); } catch(e){}
+}
+document.addEventListener('keydown', e => {
+  if (!overlay.classList.contains('active')) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+  else if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+  else if (e.key === 'End') { e.preventDefault(); showSlide(totalSlides - 1); }
+  else if (e.key === 'Escape') { if (editMode) toggleEditMode(); else exitPresentation(); }
+});
+/* touch swipe */
+let touchX = null;
+overlay.addEventListener('touchstart', e => { touchX = e.changedTouches[0].clientX; }, {passive:true});
+overlay.addEventListener('touchend', e => {
+  if (touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 60) { dx < 0 ? nextSlide() : prevSlide(); }
+  touchX = null;
+}, {passive:true});
+
+/* ============ website nav ============ */
+function showSection(id){
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const link = Array.from(document.querySelectorAll('.nav-link')).find(l => l.getAttribute('onclick').indexOf(id) >= 0);
+  if (link) link.classList.add('active');
+  const el = document.getElementById('sec-' + id);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ============ edit mode ============ */
+function toggleEditMode(){
+  editMode = !editMode;
+  if (editMode) {
+    if (!overlay.classList.contains('active')) enterPresentation();
+    document.body.classList.add('edit-active');
+    enableEditing();
+  } else {
+    document.body.classList.remove('edit-active');
+    disableEditing();
+  }
+}
+function enableEditing(){
+  document.querySelectorAll('.pres-slide .s-title, .pres-slide .s-sub, .pres-slide .step .tx, .pres-slide .pcard h3, .pres-slide .pcard p, .pres-slide .tbl-s td, .pres-slide figcaption, .pres-slide .note, .pres-slide .ck, .pres-slide .dd li, .pres-slide h2, .pres-slide p, .pres-slide .lead, .pres-slide .kicker')
+    .forEach(el => el.setAttribute('contenteditable', 'true'));
+}
+function disableEditing(){
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.removeAttribute('contenteditable'));
+}
+function refreshManageBars(){
+  totalSlides = document.querySelectorAll('.pres-slide').length;
+  document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + totalSlides;
+}
+function moveSlide(btn, dir){
+  const slide = btn.closest('.pres-slide');
+  const slides = Array.from(document.querySelectorAll('.pres-slide'));
+  const idx = slides.indexOf(slide);
+  const target = idx + dir;
+  if (target < 0 || target >= slides.length) return;
+  if (dir < 0) slides[idx].parentNode.insertBefore(slide, slides[target]);
+  else slides[target].parentNode.insertBefore(slides[target], slide);
+  showSlide(target);
+  refreshManageBars();
+}
+function deleteSlide(btn){
+  const slide = btn.closest('.pres-slide');
+  if (!confirm('ลบสไลด์นี้?')) return;
+  slide.remove();
+  refreshManageBars();
+  showSlide(Math.min(current, totalSlides - 1));
+}
+function addSlide(){
+  const tpl = prompt('เพิ่มสไลด์ใหม่ — พิมพ์หัวข้อสไลด์:');
+  if (!tpl) return;
+  const div = document.createElement('div');
+  div.className = 'pres-slide';
+  div.innerHTML =
+    '<div class="s-top"></div>' +
+    '<div class="s-head"><div class="lhs"><span class="sq"></span>UBO RBAC TRAINING</div><div class="rhs">03/11/2026</div></div>' +
+    '<div class="s-inner"><div class="s-label">สไลด์ใหม่</div>' +
+    '<h2 class="s-title">' + tpl.replace(/</g,'&lt;') + '</h2>' +
+    '<div class="s-sub">คลิกเพื่อแก้ไขข้อความ</div>' +
+    '<div class="s-body"><div class="pcard"><p>เนื้อหาสไลด์ใหม่ — แก้ไขได้ทันทีใน Edit Mode</p></div></div></div>' +
+    '<div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg"></span></div>' +
+    '<div class="manage-bar"><button onclick="moveSlide(this,-1)">▲</button><button onclick="moveSlide(this,1)">▼</button><button onclick="deleteSlide(this)">🗑️</button></div>';
+  const slides = document.querySelectorAll('.pres-slide');
+  slides[current].parentNode.insertBefore(div, slides[current].nextSibling);
+  if (editMode) enableEditing();
+  showSlide(current + 1);
+  refreshManageBars();
+}
+function saveLocal(){
+  const data = Array.from(document.querySelectorAll('.pres-slide')).map(s => s.innerHTML);
+  localStorage.setItem('ubo_rbac_slides', JSON.stringify(data));
+  alert('บันทึก ' + data.length + ' สไลด์ลง localStorage แล้ว');
+}
+function exportHtml(){
+  const data = Array.from(document.querySelectorAll('.pres-slide')).map(s => s.innerHTML);
+  localStorage.setItem('ubo_rbac_slides', JSON.stringify(data));
+  const clone = document.documentElement.cloneNode(true);
+  clone.querySelectorAll('.pres-slide').forEach((s, i) => { if (data[i]) s.innerHTML = data[i]; });
+  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'UBO-RBAC-Presentation.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function restoreLocal(){
+  const raw = localStorage.getItem('ubo_rbac_slides');
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    const slides = document.querySelectorAll('.pres-slide');
+    if (data.length === slides.length) {
+      data.forEach((html, i) => { slides[i].innerHTML = html; });
+    }
+  } catch(e){}
+}
+restoreLocal();
+window.addEventListener('load', scaleSlides);
+scaleSlides();
+</script>
+</body>
+</html>
