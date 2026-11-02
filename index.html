@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</title>
 <style>
 :root{
@@ -14,7 +17,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{font-family:'Inter','Leelawadee UI','Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text-primary);background:#f4f6f8}
+body{font-family:'Noto Sans Thai','Inter','Leelawadee UI','Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text-primary);background:#f4f6f8}
 img{max-width:100%}
 a{color:var(--accent-teal)}
 
@@ -810,7 +813,7 @@ body.edit-active .manage-bar{display:flex}
     <div class="pres-slide thanks">
       <div class="s-inner">
         <div class="kicker" style="letter-spacing:5px;font-size:16px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:800;margin-bottom:14px">ก่อนส่งมอบสิทธิ์ทุกครั้ง</div>
-        <h2>เช็คลิสต์ 6 ข้อ + ขอบคุณครับ</h2>
+        <h2>เช็คลิสต์ 6 ข้อ</h2>
         <div class="checklist" style="max-width:1400px;margin:26px auto 0;text-align:left;width:100%">
           <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ระบุผู้ใช้/ทีม → เลือกกลุ่มที่ผูก Role ถูกต้อง (ไม่ใช่กลุ่ม Default)</div>
           <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>Role ที่ให้ไปต่ำสุดพอใช้งาน (least privilege) — ไม่จับ ROOT/ADMIN ยัดให้</div>
@@ -922,7 +925,7 @@ function showSection(id){
   const link = Array.from(document.querySelectorAll('.nav-link')).find(l => l.getAttribute('onclick').indexOf(id) >= 0);
   if (link) link.classList.add('active');
   const el = document.getElementById('sec-' + id);
-  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  if (el) el.scrollIntoView({behavior:'auto', block:'start'});
 }
 
 /* ============ edit mode ============ */
