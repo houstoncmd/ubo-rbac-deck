@@ -9,15 +9,15 @@
 <title>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</title>
 <style>
 :root{
-  --bg-slide:#FFFFFF; --bg-title:#003D32; --bg-title-end:#01A982;
-  --accent-teal:#01A982; --accent-teal-light:#7DFFCB;
-  --text-primary:#1A1A1A; --text-secondary:#555555; --text-muted:#999999;
-  --text-footer:#BBBBBB; --border-light:#EEEEEE; --bg-donut-track:#E8F5F1;
+  --bg-slide:#FFFFFF; --bg-title:#0f172a; --bg-title-end:#1e3a5f;
+  --accent-teal:#2563eb; --accent-teal-light:#fbbf24;
+  --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#64748b;
+  --text-footer:#BBBBBB; --border-light:#e2e8f0; --bg-donut-track:#dbeafe;
   --ink:#0f172a;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{font-family:'Noto Sans Thai','Inter','Leelawadee UI','Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text-primary);background:#f4f6f8}
+body{font-family:'Noto Sans Thai','Inter','Leelawadee UI','Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text-primary);background:#f1f5f9}
 img{max-width:100%}
 a{color:var(--accent-teal)}
 
@@ -27,20 +27,20 @@ a{color:var(--accent-teal)}
 .brand .sq{width:22px;height:22px;background:linear-gradient(135deg,var(--bg-title),var(--accent-teal));border-radius:4px;display:inline-block}
 .nav-links{display:flex;gap:6px;flex-wrap:wrap;margin-left:14px}
 .nav-link{border:0;background:none;font-size:14.5px;color:#445;padding:8px 13px;border-radius:8px;cursor:pointer;font-weight:600}
-.nav-link:hover{background:#eefaf6;color:var(--bg-title)}
+.nav-link:hover{background:#dbeafe;color:var(--bg-title)}
 .nav-link.active{background:var(--bg-title);color:#fff}
 .nav-actions{margin-left:auto;display:flex;gap:10px}
 .btn{border:0;border-radius:9px;padding:10px 18px;font-size:14.5px;font-weight:700;cursor:pointer}
 .btn-primary{background:var(--bg-title);color:#fff}
 .btn-primary:hover{background:var(--accent-teal)}
 .btn-ghost{background:#fff;color:var(--bg-title);border:1.5px solid var(--accent-teal)}
-.btn-ghost:hover{background:#eefaf6}
+.btn-ghost:hover{background:#dbeafe}
 
 /* ================= WEBSITE ================= */
-.hero{background:linear-gradient(120deg,var(--bg-title) 0%,#015c4b 55%,var(--bg-title-end) 100%);color:#fff;padding:88px 40px 76px;text-align:center}
+.hero{background:linear-gradient(135deg,#0B132A 0%,#0F172A 55%,#1E3A5F 100%);color:#fff;padding:88px 40px 76px;text-align:center}
 .hero .kicker{letter-spacing:4px;font-size:13.5px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:700}
 .hero h1{font-size:56px;line-height:1.15;margin:16px auto 14px;max-width:1050px;font-weight:800}
-.hero p{font-size:19.5px;color:#d7fff2;max-width:880px;margin:0 auto 30px;line-height:1.6}
+.hero p{font-size:19.5px;color:#cbd5e1;max-width:880px;margin:0 auto 30px;line-height:1.6}
 .hero .meta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .chip{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);padding:8px 16px;border-radius:999px;font-size:14.5px}
 .sec{max-width:1180px;margin:0 auto;padding:64px 32px}
@@ -61,16 +61,16 @@ a{color:var(--accent-teal)}
 .tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(15,23,42,.06);font-size:15.5px}
 .tbl th{background:var(--bg-title);color:#fff;text-align:left;padding:13px 15px;font-weight:700;font-size:14.5px}
 .tbl td{padding:11px 15px;border-bottom:1px solid var(--border-light);color:#334155;vertical-align:top}
-.tbl tr:nth-child(even) td{background:#f9fbfb}
-.tbl .ok{color:#017a5b;font-weight:800}
-.tbl .no{color:#c94a4a;font-weight:800}
+.tbl tr:nth-child(even) td{background:#f8fafc}
+.tbl .ok{color:#16a34a;font-weight:800}
+.tbl .no{color:#dc2626;font-weight:800}
 .tbl .mut{color:#94a3b8;font-weight:800}
-.code{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;background:#0f172a;color:#7DFFCB;padding:2px 7px;border-radius:6px;font-size:13.5px}
+.code{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;background:#0f172a;color:#93c5fd;padding:2px 7px;border-radius:6px;font-size:13.5px}
 .note{background:#fffbea;border-left:4px solid #f59e0b;padding:14px 18px;border-radius:0 10px 10px 0;font-size:15.5px;color:#7c5e10;line-height:1.6}
 .sec-foot{border-top:1px solid var(--border-light);margin-top:54px;padding-top:22px;color:var(--text-muted);font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
 /* ================= PRESENTATION ================= */
-#presOverlay{position:fixed;inset:0;background:#0b1220;z-index:1000;display:none}
+#presOverlay{position:fixed;inset:0;background:#0b132a;z-index:1000;display:none}
 #presOverlay.active{display:block}
 #slideContainer{position:absolute;inset:0;overflow:hidden}
 .pres-slide{position:absolute !important;width:1920px;height:1080px;transform-origin:top left;background:var(--bg-slide);display:none !important;flex-direction:column;overflow:hidden;color:var(--text-primary)}
@@ -78,7 +78,7 @@ a{color:var(--accent-teal)}
 .s-inner{flex:1;min-height:0;padding:64px 96px 26px;display:flex;flex-direction:column}
 .s-top{height:6px;background:linear-gradient(90deg,var(--bg-title),var(--accent-teal));flex:none}
 .s-head{display:flex;align-items:center;justify-content:space-between;padding:18px 96px 0;flex:none}
-.s-head .lhs{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700;color:#3d5a52;letter-spacing:.5px}
+.s-head .lhs{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700;color:#475569;letter-spacing:.5px}
 .s-head .sq{width:20px;height:20px;background:linear-gradient(135deg,var(--bg-title),var(--accent-teal));border-radius:4px}
 .s-head .rhs{font-size:13.5px;color:var(--text-muted)}
 .s-label{font-size:15px;letter-spacing:3.5px;text-transform:uppercase;color:var(--accent-teal);font-weight:800;margin-bottom:10px}
@@ -86,30 +86,30 @@ a{color:var(--accent-teal)}
 .s-sub{font-size:19px;color:var(--text-secondary);margin:2px 0 22px;line-height:1.5}
 .s-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:18px}
 .s-foot{flex:none;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border-light);margin:0 96px;padding:14px 0 16px;font-size:14px;color:var(--text-footer)}
-.s-foot .pg{font-weight:800;color:#8aa39b}
+.s-foot .pg{font-weight:800;color:#64748b}
 
 /* title slide */
-.slide-title{background:linear-gradient(125deg,var(--bg-title) 0%,#015c4b 52%,var(--bg-title-end) 100%);color:#fff}
+.slide-title{background:linear-gradient(135deg,#0B132A 0%,#0F172A 55%,#1E3A5F 100%);color:#fff}
 .slide-title .s-inner{justify-content:center;padding:90px 120px}
 .slide-title .kicker{letter-spacing:5px;font-size:16px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:800}
 .slide-title h1{font-size:86px;line-height:1.08;margin:22px 0 20px;font-weight:800;max-width:1500px}
-.slide-title .lead{font-size:26px;color:#d9fff3;max-width:1350px;line-height:1.55;margin:0 0 34px}
+.slide-title .lead{font-size:26px;color:#cbd5e1;max-width:1350px;line-height:1.55;margin:0 0 34px}
 .slide-title .tmeta{display:flex;gap:14px;flex-wrap:wrap}
 .slide-title .chip{font-size:16.5px;padding:10px 20px}
-.slide-title .conf{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.22);padding:14px 120px;font-size:14px;color:#bfe9dd;display:flex;justify-content:space-between}
+.slide-title .conf{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.22);padding:14px 120px;font-size:14px;color:#cbd5e1;display:flex;justify-content:space-between}
 
 /* section divider */
 .slide-section{background:linear-gradient(120deg,var(--bg-title),var(--accent-teal));color:#fff}
 .slide-section .s-inner{justify-content:center;align-items:flex-start}
 .slide-section .kicker{letter-spacing:5px;font-size:17px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:800}
 .slide-section h2{font-size:74px;margin:18px 0 16px;font-weight:800}
-.slide-section p{font-size:24px;color:#dcfff4;max-width:1300px;line-height:1.5;margin:0}
+.slide-section p{font-size:24px;color:#cbd5e1;max-width:1300px;line-height:1.5;margin:0}
 
 /* layout helpers inside slides */
 .row{display:flex;gap:26px;min-height:0}
 .col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .steps{display:flex;flex-direction:column;gap:13px}
-.step{display:flex;gap:14px;background:#f8fbfa;border:1px solid #e2efec;border-radius:12px;padding:14px 18px;align-items:flex-start}
+.step{display:flex;gap:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 18px;align-items:flex-start}
 .step .n{flex:none;width:34px;height:34px;border-radius:9px;background:var(--bg-title);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16.5px}
 .step .tx{font-size:17.5px;line-height:1.5;color:#25364a}
 .step .tx b{color:var(--bg-title)}
@@ -119,16 +119,16 @@ a{color:var(--accent-teal)}
 .pcard h3{margin:0;font-size:22px;color:var(--bg-title);font-weight:800}
 .pcard p{margin:0;font-size:16.5px;color:var(--text-secondary);line-height:1.6}
 .pcard .ic{font-size:26px}
-.rulebox{background:linear-gradient(120deg,#003D32,#016b55);color:#eafff8;border-radius:14px;padding:20px 26px;font-size:21px;line-height:1.55;display:flex;gap:16px;align-items:center}
+.rulebox{background:linear-gradient(120deg,#0f172a,#1e3a5f);color:#f1f5f9;border-radius:14px;padding:20px 26px;font-size:21px;line-height:1.55;display:flex;gap:16px;align-items:center}
 .rulebox .lk{font-size:30px}
 .tbl-wrap{background:#fff;border:1px solid var(--border-light);border-radius:14px;overflow:hidden;box-shadow:0 3px 12px rgba(15,23,42,.06)}
 .tbl-s{width:100%;border-collapse:collapse;font-size:16.5px}
 .tbl-s th{background:var(--bg-title);color:#fff;text-align:left;padding:13px 18px;font-weight:700;font-size:16px}
 .tbl-s td{padding:11px 18px;border-bottom:1px solid var(--border-light);color:#334155;vertical-align:middle}
 .tbl-s tr:last-child td{border-bottom:0}
-.tbl-s tr:nth-child(even) td{background:#f9fbfb}
-.tbl-s .ok{color:#017a5b;font-weight:800}
-.tbl-s .no{color:#d45b5b;font-weight:800}
+.tbl-s tr:nth-child(even) td{background:#f8fafc}
+.tbl-s .ok{color:#16a34a;font-weight:800}
+.tbl-s .no{color:#dc2626;font-weight:800}
 .tbl-s .mut{color:#b0b8c1;font-weight:800}
 .tbl-s .ctr{text-align:center}
 .small-note{font-size:15.5px;color:#7d8b99;line-height:1.55}
@@ -143,17 +143,17 @@ a{color:var(--accent-teal)}
 .gcols{display:grid;grid-template-columns:1fr 1fr;gap:24px;min-height:0}
 .gcols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;min-height:0}
 .kv{display:flex;gap:10px;flex-wrap:wrap}
-.chain{background:#0f172a;border-radius:12px;padding:16px 20px;color:#9ff3dd;font-family:ui-monospace,Consolas,monospace;font-size:16px;line-height:1.75}
-.chain b{color:#ffd479}
+.chain{background:#0f172a;border-radius:12px;padding:16px 20px;color:#93c5fd;font-family:ui-monospace,Consolas,monospace;font-size:16px;line-height:1.75}
+.chain b{color:#fbbf24}
 .checklist{display:flex;flex-direction:column;gap:12px}
-.ck{display:flex;gap:14px;align-items:center;background:#f8fbfa;border:1px solid #e2efec;border-radius:12px;padding:13px 18px;font-size:19px;color:#25364a}
+.ck{display:flex;gap:14px;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:13px 18px;font-size:19px;color:#25364a}
 .ck .box{flex:none;width:26px;height:26px;border-radius:7px;border:2.5px solid var(--accent-teal);background:#fff}
 .dodont{display:grid;grid-template-columns:1fr 1fr;gap:26px}
 .dd{border-radius:14px;padding:24px 26px;box-shadow:0 3px 12px rgba(15,23,42,.06)}
-.dd.do{background:#effaf5;border:1px solid #b9ecd9}
-.dd.dont{background:#fdf1f1;border:1px solid #f3cccc}
+.dd.do{background:#ecfdf5;border:1px solid #a7f3d0}
+.dd.dont{background:#fef2f2;border:1px solid #fecaca}
 .dd h3{margin:0 0 12px;font-size:24px}
-.dd.do h3{color:#017a5b}
+.dd.do h3{color:#16a34a}
 .dd.dont h3{color:#b91c1c}
 .dd ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:9px}
 .dd li{font-size:18px;line-height:1.5;color:#334155}
@@ -164,19 +164,19 @@ a{color:var(--accent-teal)}
 .thanks{background:linear-gradient(125deg,var(--bg-title),var(--accent-teal));color:#fff}
 .thanks .s-inner{justify-content:center;align-items:center;text-align:center}
 .thanks h2{font-size:84px;margin:0 0 18px;font-weight:800}
-.thanks p{font-size:25px;color:#dcfff4;max-width:1250px;line-height:1.6;margin:0 0 14px}
+.thanks p{font-size:25px;color:#cbd5e1;max-width:1250px;line-height:1.6;margin:0 0 14px}
 
 /* controls */
-.pres-controls{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;background:rgba(9,16,28,.86);border:1px solid rgba(255,255,255,.14);padding:9px 14px;border-radius:14px;z-index:1010}
+.pres-controls{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;background:rgba(11,19,42,.94);border:1px solid rgba(255,255,255,.14);padding:9px 14px;border-radius:14px;z-index:1010}
 .pres-controls button{border:0;background:rgba(255,255,255,.12);color:#fff;font-size:15px;font-weight:700;padding:9px 16px;border-radius:9px;cursor:pointer}
 .pres-controls button:hover{background:var(--accent-teal)}
 .pres-controls .counter{color:#cfe9e1;font-size:15px;font-weight:700;min-width:74px;text-align:center}
 
 /* edit mode */
-#editBar{position:fixed;left:0;right:0;top:0;background:#111c2e;color:#fff;display:none;align-items:center;gap:12px;padding:10px 20px;z-index:1200}
+#editBar{position:fixed;left:0;right:0;top:0;background:#0f172a;color:#fff;display:none;align-items:center;gap:12px;padding:10px 20px;z-index:1200}
 body.edit-active #editBar{display:flex}
 #editBar .badge{background:#f59e0b;color:#111;font-weight:800;padding:5px 12px;border-radius:7px;font-size:14px}
-#editBar button{border:0;background:#24344f;color:#fff;font-weight:700;font-size:14px;padding:8px 14px;border-radius:8px;cursor:pointer}
+#editBar button{border:0;background:#1e293b;color:#fff;font-weight:700;font-size:14px;padding:8px 14px;border-radius:8px;cursor:pointer}
 #editBar button:hover{background:var(--accent-teal)}
 .manage-bar{position:absolute;top:10px;right:14px;display:none;gap:6px;z-index:60}
 body.edit-active .manage-bar{display:flex}
@@ -359,7 +359,7 @@ body.edit-active .manage-bar{display:flex}
             <div class="pcard"><span class="ic">🔍</span><h3>ตรวจสอบได้ (Audit)</h3><p>ทุกการเข้าสู่ระบบและแก้ไขสิทธิ์ถูกบันทึกใน System Log — ย้อนได้ว่าใคร ทำอะไร เมื่อไร</p></div>
             <div class="pcard"><span class="ic">🛡️</span><h3>ลดความเสี่ยง</h3><p>จำกัดผลกระทบจากบัญชีถูกแชร์/ถูกเปิดเผย — แม้รหัสผ่านหลุด สิทธิ์ที่จำกัดจำกัดความเสียหาย</p></div>
           </div>
-          <div class="rulebox"><span class="lk">🔑</span><div>กติกาทองของระบบนี้: <b>สิทธิ์มาทาง "กลุ่ม" (Group) เสมอ — ไม่ผูก Role กับตัวบุคคลโดยตรง</b> ตาราง <span class="code" style="background:#0b1a16">user_roles</span> ว่าง by design</div></div>
+          <div class="rulebox"><span class="lk">🔑</span><div>กติกาทองของระบบนี้: <b>สิทธิ์มาทาง "กลุ่ม" (Group) เสมอ — ไม่ผูก Role กับตัวบุคคลโดยตรง</b> ตาราง <span class="code" style="background:rgba(255,255,255,.14)">user_roles</span> ว่าง by design</div></div>
         </div>
       </div>
       <div class="s-foot"><span>การใช้งานระบบสิทธิ์ (RBAC) — UBO Verification System</span><span class="pg">3 / 18</span></div>
@@ -375,33 +375,33 @@ body.edit-active .manage-bar{display:flex}
         <h2 class="s-title">โมเดลสิทธิ์ 4 ชั้น</h2>
         <div class="s-sub">User → Group → Role → Permission — เชื่อมกันด้วย 3 ตารางกลาง ตรวจ chain ได้ทุกขั้น</div>
         <div class="s-body">
-          <div class="s-flow" style="display:flex;align-items:stretch;gap:0;background:#f8fbfa;border:1px solid #e2efec;border-radius:14px;padding:26px 22px">
-            <div style="flex:1;background:#fff;border:2px solid #01A982;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(1,169,130,.15)">
-              <div style="font-size:15px;color:#01A982;font-weight:800;letter-spacing:2px">USER</div>
+          <div class="s-flow" style="display:flex;align-items:stretch;gap:0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:26px 22px">
+            <div style="flex:1;background:#fff;border:2px solid #2563eb;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(37,99,235,.18)">
+              <div style="font-size:15px;color:#2563eb;font-weight:800;letter-spacing:2px">USER</div>
               <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">ผู้ใช้</div>
               <div style="font-size:15px;color:#64748b">19 รายในระบบ</div>
             </div>
             <div style="width:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a">
               <div style="font-size:26px">→</div><div class="code" style="font-size:14px">user_groups</div><div style="font-size:14.5px;color:#64748b">เป็นสมาชิกกลุ่ม</div>
             </div>
-            <div style="flex:1;background:#fff;border:2px solid #0d9488;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(13,148,136,.15)">
-              <div style="font-size:15px;color:#0d9488;font-weight:800;letter-spacing:2px">GROUP</div>
+            <div style="flex:1;background:#fff;border:2px solid #1e3a5f;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(30,58,95,.20)">
+              <div style="font-size:15px;color:#1e3a5f;font-weight:800;letter-spacing:2px">GROUP</div>
               <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">กลุ่มผู้ใช้</div>
               <div style="font-size:15px;color:#64748b">7 กลุ่ม (Default อัตโนมัติ)</div>
             </div>
             <div style="width:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a">
               <div style="font-size:26px">→</div><div class="code" style="font-size:14px">group_roles</div><div style="font-size:14.5px;color:#64748b">กลุ่มถือ Role</div>
             </div>
-            <div style="flex:1;background:#fff;border:2px solid #0369a1;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(3,105,161,.15)">
-              <div style="font-size:15px;color:#0369a1;font-weight:800;letter-spacing:2px">ROLE</div>
+            <div style="flex:1;background:#fff;border:2px solid #f59e0b;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(245,158,11,.20)">
+              <div style="font-size:15px;color:#f59e0b;font-weight:800;letter-spacing:2px">ROLE</div>
               <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">บทบาท</div>
               <div style="font-size:15px;color:#64748b">8 บทบาท (ROOT…Test1)</div>
             </div>
             <div style="width:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a">
               <div style="font-size:26px">→</div><div class="code" style="font-size:14px">role_permissions</div><div style="font-size:14.5px;color:#64748b">Role ถือสิทธิ์</div>
             </div>
-            <div style="flex:1;background:#fff;border:2px solid #7c3aed;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(124,58,237,.15)">
-              <div style="font-size:15px;color:#7c3aed;font-weight:800;letter-spacing:2px">PERMISSION</div>
+            <div style="flex:1;background:#fff;border:2px solid #db2777;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 3px 10px rgba(219,39,119,.18)">
+              <div style="font-size:15px;color:#db2777;font-weight:800;letter-spacing:2px">PERMISSION</div>
               <div style="font-size:24px;font-weight:800;color:#0f172a;margin:6px 0">สิทธิ์</div>
               <div style="font-size:15px;color:#64748b">42 รหัส / 4 หมวด</div>
             </div>
@@ -815,16 +815,16 @@ body.edit-active .manage-bar{display:flex}
         <div class="kicker" style="letter-spacing:5px;font-size:16px;text-transform:uppercase;color:var(--accent-teal-light);font-weight:800;margin-bottom:14px">ก่อนส่งมอบสิทธิ์ทุกครั้ง</div>
         <h2>เช็คลิสต์ 6 ข้อ</h2>
         <div class="checklist" style="max-width:1400px;margin:26px auto 0;text-align:left;width:100%">
-          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ระบุผู้ใช้/ทีม → เลือกกลุ่มที่ผูก Role ถูกต้อง (ไม่ใช่กลุ่ม Default)</div>
-          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>Role ที่ให้ไปต่ำสุดพอใช้งาน (least privilege) — ไม่จับ ROOT/ADMIN ยัดให้</div>
-          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ผู้ใช้ login ใหม่ แล้วเห็นเมนูตรงตาม design</div>
-          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ทดลองหน้าต้องห้าม → เจอหน้าล็อก/ข้อความสิทธิ์ (ไม่ใช่ข้อมูลรั่ว)</div>
-          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>System Log บันทึกเหตุการณ์ถูกต้อง (login + แก้ไขสิทธิ์)</div>
-          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#eafff8"><span class="box" style="border-color:var(--accent-teal-light)"></span>ไม่มีผู้ใช้ค้าง Waiting Queue โดยไม่จำเป็น</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#f1f5f9"><span class="box" style="border-color:var(--accent-teal-light)"></span>ระบุผู้ใช้/ทีม → เลือกกลุ่มที่ผูก Role ถูกต้อง (ไม่ใช่กลุ่ม Default)</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#f1f5f9"><span class="box" style="border-color:var(--accent-teal-light)"></span>Role ที่ให้ไปต่ำสุดพอใช้งาน (least privilege) — ไม่จับ ROOT/ADMIN ยัดให้</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#f1f5f9"><span class="box" style="border-color:var(--accent-teal-light)"></span>ผู้ใช้ login ใหม่ แล้วเห็นเมนูตรงตาม design</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#f1f5f9"><span class="box" style="border-color:var(--accent-teal-light)"></span>ทดลองหน้าต้องห้าม → เจอหน้าล็อก/ข้อความสิทธิ์ (ไม่ใช่ข้อมูลรั่ว)</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#f1f5f9"><span class="box" style="border-color:var(--accent-teal-light)"></span>System Log บันทึกเหตุการณ์ถูกต้อง (login + แก้ไขสิทธิ์)</div>
+          <div class="ck" style="background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#f1f5f9"><span class="box" style="border-color:var(--accent-teal-light)"></span>ไม่มีผู้ใช้ค้าง Waiting Queue โดยไม่จำเป็น</div>
         </div>
-        <p style="margin-top:34px;font-size:21px;color:#cffff0">คำถาม / ขอสิทธิ์เพิ่ม → ติดต่อทีม Admin ผ่านระบบ · ทุกการแก้ไขถูกบันทึกใน System Log</p>
+        <p style="margin-top:34px;font-size:21px;color:#cbd5e1">คำถาม / ขอสิทธิ์เพิ่ม → ติดต่อทีม Admin ผ่านระบบ · ทุกการแก้ไขถูกบันทึกใน System Log</p>
       </div>
-      <div class="conf" style="position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.20);padding:14px 96px;font-size:14px;color:#bfe9dd;display:flex;justify-content:space-between"><span>UBO Verification System · RBAC Training</span><span>18 / 18</span></div>
+      <div class="conf" style="position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.20);padding:14px 96px;font-size:14px;color:#cbd5e1;display:flex;justify-content:space-between"><span>UBO Verification System · RBAC Training</span><span>18 / 18</span></div>
     </div>
 
   </div><!-- /slideContainer -->
